@@ -1,0 +1,24 @@
+# ===== Vivado generated artifacts =====
+.Xil/
+*.jou
+*.str
+vivado*.backup.*
+xsim.dir/
+*.runs/
+*.cache/
+*.hw/
+*.gen/
+*.sim/
+*.ip_user_files/
+*.dcp
+*.rpx
+*.pb
+
+# ===== Vivado logs (keep the regression summary log) =====
+*.log
+!_regress.log
+
+# ===== ModelSim / Questa generated artifacts =====
+work/
+*.wlf
+transcript
