@@ -24,23 +24,41 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Normalize committed vector line endings (repo was authored on Windows/CRLF)
+      - name: Snapshot committed golden vectors (EOL-normalized)
         run: |
-          find expected_outputs -name '*.txt' -exec sed -i 's/\r$//' {} +
+          mkdir -p /tmp/committed_vectors
+          for f in expected_outputs/*.txt; do
+            sed 's/\r$//' "$f" > "/tmp/committed_vectors/$(basename "$f")"
+          done
+          echo "Snapshotted $(ls /tmp/committed_vectors | wc -l) committed vector files."
 
       - name: Regenerate all golden vectors
         run: |
           cd python
           python golden_model.py
 
-      - name: Normalize regenerated vector line endings
+      - name: Verify regenerated vectors match committed files (value-exact, EOL-normalized)
         run: |
-          find expected_outputs -name '*.txt' -exec sed -i 's/\r$//' {} +
-
-      - name: Verify regenerated vectors match committed files bit-exactly
-        run: |
-          git diff --exit-code -- expected_outputs/
-          echo "All golden vector files regenerate byte-identically (line-ending normalized)."
+          fail=0
+          count=0
+          total=0
+          for f in expected_outputs/*.txt; do
+            b=$(basename "$f")
+            count=$((count+1))
+            sed 's/\r$//' "$f" > /tmp/regen_check.txt
+            total=$((total + $(wc -l < /tmp/regen_check.txt)))
+            if ! diff -q "/tmp/committed_vectors/$b" /tmp/regen_check.txt > /dev/null 2>&1; then
+              echo "MISMATCH: $b"
+              diff "/tmp/committed_vectors/$b" /tmp/regen_check.txt | head -5
+              fail=1
+            fi
+          done
+          echo "Compared $count files / $total expected values."
+          if [ "$fail" -ne 0 ]; then
+            echo "::error::Golden vector regression FAILED - regenerated files differ from committed."
+            exit 1
+          fi
+          echo "All golden vectors regenerate identically - the Python-golden contract is intact."
 
       - name: Summarize verification surface
         run: |
