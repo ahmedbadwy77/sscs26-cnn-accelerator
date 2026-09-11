@@ -1,0 +1,9 @@
+# GitHub Linguist overrides — this is an FPGA/HDL project.
+# ModelSim .do scripts are Tcl, not Stata; XDC constraints are Tcl-based.
+
+*.do linguist-language=Tcl
+*.xdc linguist-language=Tcl
+*.v linguist-language=Verilog
+*.sv linguist-language=SystemVerilog
+*.wlf binary
+*.bak binary
