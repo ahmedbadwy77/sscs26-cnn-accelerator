@@ -124,6 +124,19 @@ The streaming datapath (line buffers → sliding window → tap-delay alignment 
 
 ![System architecture](images/system_architecture.png)
 
+### Edge-Detection Demonstration — Bonus Feature
+
+The kernel bank is **runtime-programmable**, so the same verified datapath doubles as an edge detector: load the classic 3×3 Sobel operators (8-bit signed) and stream a frame — **no RTL changes**. `demo/` contains a deterministic 32×32 test scene plus the Sobel Gx/Gy expected outputs (raw and ReLU-clamped; 30×30 = 900 outputs each), computed under the identical fixed-point contract (8u pixel / 8s kernel / 17-bit products / 20-bit full-precision accumulation — Sobel worst case 8×255 = 2,040 ≪ 2¹⁹, so overflow stays impossible).
+
+```text
+SOBEL Gx            SOBEL Gy
+[-1  0  +1]         [-1 -2 -1]
+[-2  0  +2]         [ 0  0  0]
+[-1  0  +1]         [+1 +2 +1]
+```
+
+Regenerate with: `python edge_detection_demo.py` (see [How to Run](#how-to-run)).
+
 ## Throughput and Latency
 
 The pipeline is fully parameterized:
@@ -287,9 +300,7 @@ Post-route placement on xc7z020clg400-1:
 | FPGA reports | ✅ `freq_sweep/` — 21 routed runs (timing / utilization / power / clocks) + summary CSV |
 | Project report | ✅ `doc/AI_Accelerator_Report.pdf` |
 | Competition announcement | ✅ `doc/2026_SSCS_Egypt_Competition_Announcement.pdf` |
-| Board demonstration (optional bonus) | ⬜ Not performed |
-| Edge-detection / inspection demo (optional bonus) | ⬜ Not in scope |
-| Short presentation | ⬜ Prepared separately by the team (not in repo) |
+| Edge-detection / inspection demo (optional bonus) | ✅ **Supported** — [demo/edge_detection_demo.py](demo/edge_detection_demo.py) loads the Sobel operators into the runtime-programmable kernel bank and ships the expected outputs for a 32×32 test scene |
 
 ## Project Structure
 
@@ -314,6 +325,10 @@ Post-route placement on xc7z020clg400-1:
 │   ├── cnn_system.v              #   wrapper: local memories + start/busy/done FSM
 │   ├── cnn_system_tb.v           #   system testbench
 │   └── run.do                    #   system simulation script
+├── demo/                         # BONUS edge-detection demonstration
+│   ├── edge_detection_demo.py    #   Sobel Gx/Gy through the same fixed-point contract
+│   ├── test_image_32x32.txt      #   deterministic 32×32 input scene
+│   └── expected_sobel_*.txt      #   expected RTL outputs (raw + ReLU-clamped)
 ├── constrains/
 │   └── timing_constraints.xdc    # 2.56 ns clock constraint, I/O settings
 ├── python/
@@ -372,7 +387,16 @@ vivado -mode batch -source max_freq_sweep.tcl
 
 Runs the complete 21-run sweep (7 configurations × `NUM_KERNELS` ∈ {1,2,3}): per run it reads `../rtl/*.v`, runs `synth_design -top cnn_top` with generics on **xc7z020clg400-1**, applies the fixed **2.56 ns** operating point, runs `opt_design → place_design → phys_opt_design → route_design`, and writes per-run timing/utilization/power/clock reports under `runs/`, plus the summary `max_freq_results.csv`.
 
-### 5. Continuous integration
+### 5. Edge-detection demo (bonus)
+
+```bash
+cd demo
+python edge_detection_demo.py
+```
+
+Loads the Sobel operators through the same fixed-point contract as the accelerator and regenerates the test image plus all four expected-output files (Sobel Gx/Gy, raw and ReLU-clamped).
+
+### 6. Continuous integration
 
 Every push that touches the golden model or expected outputs triggers the **Golden Model Verification** workflow: it regenerates all 21 vectors on GitHub Actions and fails unless they match the committed files bit-exactly (line-ending normalized). Status badge: top of this README.
 

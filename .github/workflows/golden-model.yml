@@ -4,11 +4,13 @@ on:
   push:
     paths:
       - 'python/**'
+      - 'demo/**'
       - 'expected_outputs/**'
       - '.github/workflows/golden-model.yml'
   pull_request:
     paths:
       - 'python/**'
+      - 'demo/**'
       - 'expected_outputs/**'
   workflow_dispatch:
 
@@ -59,6 +61,31 @@ jobs:
             exit 1
           fi
           echo "All golden vectors regenerate identically - the Python-golden contract is intact."
+
+      - name: Edge-detection demo regression (bonus)
+        run: |
+          mkdir -p /tmp/committed_demo
+          for f in demo/expected_*.txt; do
+            sed 's/\r$//' "$f" > "/tmp/committed_demo/$(basename "$f")"
+          done
+          cd demo
+          python edge_detection_demo.py
+          cd ..
+          fail=0
+          for f in demo/expected_*.txt; do
+            b=$(basename "$f")
+            sed 's/\r$//' "$f" > /tmp/demo_regen.txt
+            if ! diff -q "/tmp/committed_demo/$b" /tmp/demo_regen.txt > /dev/null 2>&1; then
+              echo "MISMATCH: $b"
+              diff "/tmp/committed_demo/$b" /tmp/demo_regen.txt | head -5
+              fail=1
+            fi
+          done
+          if [ "$fail" -ne 0 ]; then
+            echo "::error::Edge-detection demo regression FAILED."
+            exit 1
+          fi
+          echo "Edge-detection demo outputs regenerate identically."
 
       - name: Summarize verification surface
         run: |
