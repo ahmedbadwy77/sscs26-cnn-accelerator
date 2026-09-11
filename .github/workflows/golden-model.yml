@@ -1,0 +1,49 @@
+name: Golden Model Verification
+
+on:
+  push:
+    paths:
+      - 'python/**'
+      - 'expected_outputs/**'
+      - '.github/workflows/golden-model.yml'
+  pull_request:
+    paths:
+      - 'python/**'
+      - 'expected_outputs/**'
+  workflow_dispatch:
+
+jobs:
+  golden-model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Normalize committed vector line endings (repo was authored on Windows/CRLF)
+        run: |
+          find expected_outputs -name '*.txt' -exec sed -i 's/\r$//' {} +
+
+      - name: Regenerate all golden vectors
+        run: |
+          cd python
+          python golden_model.py
+
+      - name: Normalize regenerated vector line endings
+        run: |
+          find expected_outputs -name '*.txt' -exec sed -i 's/\r$//' {} +
+
+      - name: Verify regenerated vectors match committed files bit-exactly
+        run: |
+          git diff --exit-code -- expected_outputs/
+          echo "All golden vector files regenerate byte-identically (line-ending normalized)."
+
+      - name: Summarize verification surface
+        run: |
+          echo "Golden vector files  : $(ls expected_outputs | wc -l)"
+          echo "Total expected values: $(cat expected_outputs/*.txt | wc -l)"
+          echo "Configurations       : 7 (N=3..7 x W=8/32/64, ReLU=0/1) x K=1..3"

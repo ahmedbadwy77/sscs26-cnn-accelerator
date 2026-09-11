@@ -4,52 +4,107 @@
 
 **Parameterized N×N 2-D convolution core · DSP48E1 MAC cascade · 390.625 MHz routed operating point**
 
-![Verilog](https://img.shields.io/badge/HDL-Verilog-1e90ff)
-![Python 3](https://img.shields.io/badge/Python-3-3776AB?logo=python&logoColor=white)
-![Xilinx Vivado](https://img.shields.io/badge/Xilinx-Vivado-E01F27)
-![ModelSim](https://img.shields.io/badge/Simulator-ModelSim-00629B)
-![Xilinx Zynq-7020](https://img.shields.io/badge/FPGA-Zynq--7020-success)
-![IEEE SSCS Egypt 2026](https://img.shields.io/badge/IEEE%20SSCS%20Egypt-2026%20Competition-blue)
+[![HDL](https://img.shields.io/badge/HDL-Verilog--2001-1e90ff)](rtl/)
+[![Python](https://img.shields.io/badge/Golden%20Model-Python%203-3776AB?logo=python&logoColor=white)](python/golden_model.py)
+[![Xilinx Vivado](https://img.shields.io/badge/Synthesis-Xilinx%20Vivado-E01F27)](freq_sweep/)
+[![ModelSim](https://img.shields.io/badge/Simulation-ModelSim-00629B)](sim/)
+[![FPGA](https://img.shields.io/badge/FPGA-Zynq--7020-success)](https://www.amd.com/en/products/adaptive-socs-and-fpgas/zynq-7000-series.html)
+[![IEEE SSCS Egypt 2026](https://img.shields.io/badge/IEEE%20SSCS%20Egypt-2026%20Competition-e8710a)](doc/2026_SSCS_Egypt_Competition_Announcement.pdf)
+[![Golden Model CI](https://github.com/ahmedbadwy77/streaming-cnn-accelerator-zynq7020/actions/workflows/golden-model.yml/badge.svg)](../../actions/workflows/golden-model.yml)
 
 *Developed for the IEEE SSCS Egypt Chapter 2026 Student Design Competition*
 
 </div>
 
----
+![System architecture](images/system_architecture.png)
 
-## Overview
+## At a Glance
 
-This repository contains a **streaming 2-D convolution (CNN) accelerator** for the Xilinx Zynq-7020, built by **Team FlipFlopers — Cairo University** for the IEEE SSCS Egypt Chapter 2026 Student Design Competition.
+| LUTs | FFs | DSP48E1 | BRAM | MAX FREQ | Power | Throughput | FOM | Verification |
+|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| **51** | **97** | **9** | **0** | **390.625 MHz** | **0.134 W** | **1 pixel/cycle** | **0.01490** | **2596/2596** |
 
-The core streams a 32×32 8-bit grayscale image, convolves it with a runtime-programmable 8-bit signed kernel (stride 1, valid convolution, full-precision signed accumulation), optionally applies ReLU, and sustains **one output pixel per cycle** in steady state. Everything is parameterized — kernel size (N = 3…7), image width, ReLU enable, and `NUM_KERNELS = 1…3` — and the RTL is verified **bit-exactly** against a Python golden model across 21 regression configurations.
+Bit-exact against an independent Python golden model across **21 regression configurations** (7 kernel/image/ReLU settings × 1–3 parallel kernels), routed and timed on `xc7z020clg400-1`.
 
-**Baseline configuration:** N=3, W=32, ReLU enabled, `NUM_KERNELS=1`, synthesized and routed on **xc7z020clg400-1**.
+## Competition Context
 
-## Final Results (baseline, post-route)
+This accelerator is Team **FlipFlopers**' (Cairo University) entry for the **IEEE SSCS Egypt Chapter 2026 Student Design Competition** — an FPGA-based Edge-AI vision accelerator judged on correctness, digital design quality, resource usage, latency, throughput, timing closure, and power estimate. Submission deadline: **September 15, 2026** ([announcement](doc/2026_SSCS_Egypt_Competition_Announcement.pdf)).
 
-| Metric | Baseline |
-|---|---|
-| FPGA | Xilinx Zynq-7020 |
-| Device | xc7z020clg400-1 |
-| Kernel | 3×3 |
-| Image | 32×32 |
-| Input | 8-bit unsigned |
-| Kernel coefficients | 8-bit signed |
-| ReLU | Enabled — Bonus Feature |
-| Parallel kernels | 1 |
-| LUTs | 51 |
-| FFs | 97 |
-| DSP48E1 | 9 |
-| BRAM | 0 |
-| Total Power | 0.134 W |
-| WNS | +0.007 ns |
-| Clock Constraint | 2.56 ns |
-| MAX FREQ | 390.625 MHz |
-| Throughput | 1 pixel/cycle — Bonus Target |
-| FOM | 0.01490 |
-| Verification | 2596/2596 PASS |
+## Competition Requirements Coverage
 
-![Utilization report](images/utilization_report.png)
+Format follows the required reporting table of the competition announcement.
+
+| Parameter | Specification (competition) | Team Result | Units | Comments |
+|---|---|---|---|---|
+| Input image size | ≥ 32×32, grayscale / single-channel | 32×32 baseline; width parameterized | pixels | image widths 8/32/64 exercised in regression & sweep |
+| Input precision | Fixed-point unsigned (justify choice) | 8-bit unsigned | — | full-precision integer datapath; no input quantization |
+| Kernel precision | 8-bit signed fixed-point / integer | 8-bit signed two's complement | — | run-time programmable coefficients |
+| Kernel size | N×N, programmable coefficients | N=3 baseline; RTL verified N=3…7 | — | serial kernel load, reload between bursts |
+| Stride | 1 | 1 | — | valid convolution |
+| Output precision | ≥ 16-bit signed; explain overflow policy | 20-bit signed (N=3); OUT_W = 2·8 + ⌈log₂N²⌉ | bits | overflow **impossible by construction** (worst case 9×32,640 = 293,760 < 20-bit capacity 524,287); no truncation, rounding, or saturation anywhere |
+| Activation (ReLU) | Optional — **bonus** | Implemented (`RELU_EN`), enabled in baseline | — | compile-time clamp; adds **no extra pipeline cycle** |
+| Architecture type | Streaming datapath (describe buffers/windowing) | Fully streaming: line buffers + sliding window | — | N−1 = 2 row line buffers, depth W−N = 29, SRL-mapped |
+| Multipliers / MACs | N² per kernel | 9 × DSP48E1 (K=1), ×K for parallel kernels | slices | multiply **and** accumulate inside the DSP cascade |
+| Pipeline stages | Pipelined convolution | Registered multiply + N²-stage cascade | — | staggered accumulation, absorbed by fill period |
+| Latency | — | **76 cycles** to first output pixel | cycles | FILL 66 + pipeline 10; equations parameterized by N, W |
+| Throughput | 1 pixel/cycle — **bonus** | **Met** | pixels/cycle | steady state; `NUM_KERNELS` replicates MAC/output per kernel |
+| FPGA utilization | LUTs / FFs / DSPs / BRAMs | **51 / 97 / 9 / 0** (routed) | — | `freq_sweep/runs/run_19_N3_W32_R1_K1_MAXFREQ/` |
+| Maximum frequency | Report | **390.625 MHz** at 2.56 ns constraint; WNS +0.007 ns, 0 failing endpoints | MHz | selected routed MAX-FREQ operating point — not derived from WNS |
+| Power estimate | Report | **0.134 W** (0.105 static + 0.029 dynamic) | W | Vivado tool estimate, low confidence (no SAIF switching activity) |
+| Verification status | Golden model (Python/MATLAB/C) | Python golden model — **2596/2596 bit-exact**, 7/7 matrix, 900-output system test | — | zero mismatches, zero X in valid windows |
+| FOM | Required formula | **0.01490** | — | 1 / [0.134 × (51 + 50×9 + 100×0)] |
+
+## Architecture
+
+Data flow: **input stream → line buffers (`line_buffer` ×(N−1)) → N×N sliding window (`window_nxn`) → triangular tap-delay alignment → 9 parallel multipliers (one DSP48E1 per tap) → accumulation cascade inside the DSP columns (`tree_nxn`) → optional ReLU (`output_stage`) → output**.
+
+```mermaid
+flowchart LR
+    HOST["HOST<br/>kernel writes · image stream"]
+
+    subgraph SYS["cnn_system — system-level wrapper (BONUS)"]
+        direction LR
+        MEM["LOCAL MEMORIES<br/>image 32×32×8b · kernel 9×8b"]
+        SYSFSM["SYSTEM FSM<br/>IDLE → KERNEL_STREAM → KERNEL_GAP → RUN → DONE<br/>border masking → 30×30 valid outputs"]
+    end
+
+    subgraph CORE["cnn_top — streaming convolution core"]
+        direction LR
+        subgraph DPATH["DATA PATH"]
+            direction LR
+            WIN["window_nxn<br/>line_buffer ×(N−1) · depth W−N = 29<br/>3×3 window · 72 b"]
+            MAC["tree_nxn ×NUM_KERNELS<br/>tap-delay alignment<br/>9 × DSP48E1 · 17 b products<br/>cascade accumulation · 20 b"]
+            OUT["output_stage ×NUM_KERNELS<br/>optional ReLU · out_pixel[19:0]"]
+            WIN -->|"window_flat[71:0]"| MAC
+            MAC -->|"mac_result[19:0]"| OUT
+        end
+        KCM["kernel_coeff_memory<br/>serial runtime-programmable bank<br/>9 × 8 b signed = 72 b"]
+        CTRL["cnn_controller<br/>IDLE → COMPUTING → VALID<br/>fill = (N−1)(W+1) = 66<br/>persistent data_valid"]
+    end
+
+    HOST -->|"kernel + image writes"| MEM
+    MEM -->|"image stream · 8 b/clk"| WIN
+    MEM -->|"kernel stream"| KCM
+    KCM -->|"kernels_flat[71:0]"| MAC
+    CTRL -.->|"fill / valid sequencing"| WIN
+    CTRL -.->|"data_valid gating"| OUT
+    OUT -->|"1 output pixel / cycle"| SYSFSM
+    SYSFSM -->|"done · 900 valid outputs"| HOST
+```
+
+For N=3 there are 9 taps and 9 DSP48E1 blocks; accumulation stays in the DSP cascade, which is what keeps fabric utilization at 51 LUTs while sustaining 1 pixel/cycle. All on-chip storage maps to SRL shift registers — the design uses **zero BRAMs**.
+
+![Datapath](images/datapath.png)
+
+## Highlights
+
+- **Additions cost zero LUTs.** Each tap multiplies in its own DSP48E1 and hands its running sum to the next slice through the PCOUT→PCIN cascade — the nine additions never touch fabric.
+- **Zero BRAMs, minimal storage.** Line buffers and tap delays map to SRL primitives; forcing a datapath reset would re-map them to flip-flops and inflate both LUT and FF counts, so the datapath is deliberately reset-free (deterministic fill/flush protocol instead).
+- **Overflow impossible by construction.** OUT_W = 16 + ⌈log₂N²⌉ signed bits strictly exceeds the worst case N²·32,640 for every N.
+- **One RTL, many designs.** The same parameterized sources verify N=3…7 and K=1…3 — the sweep includes a 49-tap, 3-kernel configuration (163 LUTs, 147 DSPs) alongside the 51-LUT competition baseline.
+- **Measured, not assumed.** The multiplier decision is backed by a routed DSP-free A/B build (792 LUTs, 143 MHz) that loses to the DSP design on FOM **even when each side is evaluated at its own MAX-FREQ operating point**.
+- **Warm-pipeline restart.** Bursts run back-to-back without re-resetting; the persistent-valid protocol eliminates inter-burst gaps in the output stream.
+- **Golden vectors under CI.** Every push regenerates all 21 expected-output files and verifies them byte-identically (badge at the top).
 
 ## Competition Bonus Features
 
@@ -62,59 +117,12 @@ The streaming datapath (line buffers → sliding window → tap-delay alignment 
 ### Parallel Multi-Kernel Support — Bonus Feature
 `NUM_KERNELS = 1..3` kernels run in parallel. The **window generator and controller are shared**, while the MAC engine (`tree_nxn`) and output stage are **replicated per kernel**, multiplying throughput without duplicating the input plumbing.
 
+![Multi-kernel extension](images/multi_kernel.png)
+
 ### System-Level Integration — Bonus Feature
 `cnn_system` wraps `cnn_top` with **local image and kernel memories** and a **start/busy/done FSM** (no AXI), streaming a full frame on-chip and masking border pixels. It is verified by a separate dedicated testbench (below).
 
 ![System architecture](images/system_architecture.png)
-
-## Architecture
-
-Data flow: **input stream → line buffers (`line_buffer` ×(N−1)) → N×N sliding window (`window_nxn`) → triangular tap-delay alignment → 9 parallel multipliers (one DSP48E1 per tap) → accumulation cascade inside the DSP columns (`tree_nxn`) → optional ReLU (`output_stage`) → output**.
-
-For N=3 there are 9 taps and 9 DSP48E1 blocks; accumulation stays in the DSP cascade, which is what keeps fabric utilization at 51 LUTs while sustaining 1 pixel/cycle.
-
-```mermaid
-graph TD
-    HOST["Host / testbench"] -->|"start · image · kernel streams"| WRAP
-    WRAP -->|"busy · done · valid outputs"| HOST
-
-    subgraph WRAP["cnn_system — system-level wrapper (BONUS)"]
-        MEM["Local image + kernel memories<br/>start / busy / done FSM<br/>border masking"]
-    end
-
-    subgraph CORE["cnn_top — streaming convolution core"]
-        direction LR
-        CTRL["cnn_controller<br/>fill / valid sequencing"]
-        KCM["kernel_coeff_memory"]
-        WIN["window_nxn<br/>line_buffer ×(N−1)"]
-        TREE["tree_nxn ×NUM_KERNELS<br/>tap delay → 9× DSP48E1 MAC cascade"]
-        OUT["output_stage ×NUM_KERNELS<br/>optional ReLU"]
-    end
-
-    MEM -->|"pixel stream"| WIN
-    MEM -->|"kernel coefficients"| KCM
-    KCM -->|"coefficients"| TREE
-    WIN -->|"aligned N×N window"| TREE
-    TREE -->|"MAC results"| OUT
-    CTRL -.->|"fill / valid control"| WIN
-    CTRL -.->|"data_valid"| OUT
-    OUT -->|"out_pixel (20-bit signed)"| MEM
-```
-
-Datapath widths for the N=3 configuration (one DSP48E1 per tap):
-
-![Datapath](images/datapath.png)
-
-Compact dataflow view:
-
-```mermaid
-graph LR
-    A["Pixel stream"] --> B["Sliding N×N window<br/>(line buffers)"]
-    B --> C["Tap-delay alignment"]
-    C --> D["DSP48E1 MAC cascade<br/>(9 taps)"]
-    D --> E["Optional ReLU"]
-    E --> F["1 output pixel / cycle"]
-```
 
 ## Throughput and Latency
 
@@ -130,7 +138,7 @@ FIRST_OUTPUT_LATENCY = FILL + PIPELINE_LATENCY
 Baseline (N=3, W=32):
 
 | Stage | Cycles |
-|---|---|
+|---|---:|
 | Fill (window priming) | 66 |
 | Pipeline latency | 10 |
 | **First output pixel** | **76** |
@@ -173,7 +181,7 @@ Python Golden Model → Expected Output File → RTL Testbench → Structural Mi
 ### Verification Matrix
 
 | N | IMG_WIDTH | ReLU | NUM_KERNELS | Result |
-|---|---|---|---|---|
+|:-:|:-:|:-:|:-:|:-:|
 | 3 | 32 | 0 | 1 | PASS |
 | 3 | 64 | 0 | 1 | PASS |
 | 4 | 32 | 0 | 1 | PASS |
@@ -206,13 +214,15 @@ The bonus system wrapper is verified independently of the core regression above:
 A DSP-free fabric multiplier/accumulator reference was implemented to validate the multiplier decision. **Each architecture is evaluated at its own routed MAX-FREQ operating point** (the DSP design closes 2.56 ns; the fabric reference closes 143 MHz).
 
 | Architecture | LUTs | FFs | DSPs | MAX FREQ | Power | FOM |
-|---|---|---|---|---|---|---|
+|---|:-:|:-:|:-:|:-:|:-:|:-:|
 | **DSP48E1-based (selected)** | 51 | 97 | 9 | 390.625 MHz | 0.134 W | **0.01490** |
 | DSP-free fabric reference | 792 | 441 | 0 | 143 MHz | 0.125 W | 0.01010 |
 
 DSP usage was **intentionally retained**: the DSP-based design uses ~15× fewer LUTs, runs at ~2.7× the frequency, and achieves a better FOM.
 
 ![Figure-of-merit comparison](images/fom_comparison.png)
+
+![Multiplier decision study](images/multiplier_decision.png)
 
 ## Timing
 
@@ -244,7 +254,11 @@ These are **Vivado tool estimates, not silicon measurements**. Confidence is low
 
 ## Implementation View
 
-Post-route placement of the 51-LUT / 9-DSP baseline on xc7z020clg400-1:
+Routed utilization evidence for the 51-LUT / 9-DSP / 0-BRAM baseline:
+
+![Utilization report](images/utilization_report.png)
+
+Post-route placement on xc7z020clg400-1:
 
 ![Device placement](images/device_placement.png)
 
@@ -253,19 +267,36 @@ Post-route placement of the 51-LUT / 9-DSP baseline on xc7z020clg400-1:
 
 | | |
 |---|---|
-| ![Multi-kernel extension](images/multi_kernel.png) | ![Window generation](images/window_generation.png) |
-| ![MAC engine](images/mac_engine.png) | ![Controller FSM](images/controller_fsm.png) |
-| ![System wrapper](images/system_wrapper.png) | ![DSP cascade](images/dsp_cascade.png) |
-| ![Multiplier architectures](images/multiplier_architectures.png) | ![Multiplier decision](images/multiplier_decision.png) |
+| ![Window generation](images/window_generation.png) | ![MAC engine](images/mac_engine.png) |
+| ![Controller FSM](images/controller_fsm.png) | ![System wrapper](images/system_wrapper.png) |
+| ![DSP cascade](images/dsp_cascade.png) | ![Multiplier architectures](images/multiplier_architectures.png) |
 | ![DSP vs DSP-free A/B](images/dsp_vs_dspfree_ab.png) | ![DSP vs fabric architectures](images/dsp_vs_fabric_arch.png) |
 | ![SRL vs FF storage](images/srl_vs_ff_storage.png) | ![Device routing](images/device_routing.png) |
 
 </details>
 
+## Competition Deliverables Checklist
+
+| Deliverable (per announcement) | Status |
+|---|---|
+| RTL source files | ✅ `rtl/` (7 modules) + `system/cnn_system.v` |
+| Testbench | ✅ `tb/cnn_top_tb.v` + `system/cnn_system_tb.v` |
+| Golden model | ✅ `python/golden_model.py` (pure Python 3) |
+| Expected output files | ✅ `expected_outputs/` — 21 files, CI-regenerated |
+| Input test images / feature maps | ✅ generated on-the-fly by the testbench (LFSR, ramp, worst-case corner stimuli) rather than shipped as image files |
+| FPGA reports | ✅ `freq_sweep/` — 21 routed runs (timing / utilization / power / clocks) + summary CSV |
+| Project report | ✅ `doc/AI_Accelerator_Report.pdf` |
+| Competition announcement | ✅ `doc/2026_SSCS_Egypt_Competition_Announcement.pdf` |
+| Board demonstration (optional bonus) | ⬜ Not performed |
+| Edge-detection / inspection demo (optional bonus) | ⬜ Not in scope |
+| Short presentation | ⬜ Prepared separately by the team (not in repo) |
+
 ## Project Structure
 
 ```text
 .
+├── .github/workflows/
+│   └── golden-model.yml          # CI: regenerate golden vectors + bit-exact diff
 ├── rtl/                          # 7 synthesizable Verilog-2001 modules (top: cnn_top)
 │   ├── cnn_top.v                 #   streaming convolution core top
 │   ├── cnn_controller.v          #   fill / valid sequencing FSM
@@ -288,13 +319,13 @@ Post-route placement of the 51-LUT / 9-DSP baseline on xc7z020clg400-1:
 ├── python/
 │   └── golden_model.py           # pure-Python-3 golden reference model
 ├── expected_outputs/             # 21 golden output vector files (generated by golden_model.py)
-│   └── expected_out_<N>x<W>_relu<R>_k<K>.txt
 ├── freq_sweep/                   # Vivado MAX-FREQ characterization sweep (fixed 2.56 ns)
 │   ├── max_freq_sweep.tcl        #   21-run synthesis + implementation batch script
 │   ├── max_freq_results.csv      #   summary: LUT/FF/DSP/BRAM/power/WNS/FOM per run
 │   └── runs/                     #   per-run clocks/timing/utilization/power reports
 ├── doc/
-│   └── AI_Accelerator_Report.pdf # full project report
+│   ├── AI_Accelerator_Report.pdf            # full project report
+│   └── 2026_SSCS_Egypt_Competition_Announcement.pdf  # competition specification
 ├── images/                       # 25 evidence figures
 ├── _regress.log                  # 7/7 PASS RTL regression summary log
 ├── README.md
@@ -341,12 +372,16 @@ vivado -mode batch -source max_freq_sweep.tcl
 
 Runs the complete 21-run sweep (7 configurations × `NUM_KERNELS` ∈ {1,2,3}): per run it reads `../rtl/*.v`, runs `synth_design -top cnn_top` with generics on **xc7z020clg400-1**, applies the fixed **2.56 ns** operating point, runs `opt_design → place_design → phys_opt_design → route_design`, and writes per-run timing/utilization/power/clock reports under `runs/`, plus the summary `max_freq_results.csv`.
 
+### 5. Continuous integration
+
+Every push that touches the golden model or expected outputs triggers the **Golden Model Verification** workflow: it regenerates all 21 vectors on GitHub Actions and fails unless they match the committed files bit-exactly (line-ending normalized). Status badge: top of this README.
+
 ## Reproducibility Notes
 
 - **FPGA part:** xc7z020clg400-1, fixed in `max_freq_sweep.tcl` and in the checked-in reports.
 - **Baseline parameters:** N=3, IMG_WIDTH=32, PIXEL_BITS=8, RELU_EN=1, NUM_KERNELS=1.
 - **Tool versions:** the archived runs in this repository were produced with **Vivado v2019.1 (SW Build 2552052)** and **ModelSim – Intel FPGA Edition 2020.1** (per the run logs of the original project environment). The final report (`doc/AI_Accelerator_Report.pdf`) cites the **Vivado 2026** toolchain for the submission build. Both facts are stated as-is.
-- **Source-controlled inputs:** all RTL, testbenches, sim/system scripts, the XDC, the Python golden model, all 21 golden expected-output files, the sweep TCL + CSV + per-run reports, the report PDF, and the evidence images.
+- **Source-controlled inputs:** all RTL, testbenches, sim/system scripts, the XDC, the Python golden model, all 21 golden expected-output files, the sweep TCL + CSV + per-run reports, the report PDF, the competition announcement, and the evidence images.
 - **Generated artifacts** (ModelSim `work/` libraries, `*.wlf`, transcripts, Vivado journals/logs/backups) are intentionally **not** committed — they are rebuilt by the commands above and covered by `.gitignore`.
 - **No Vivado `.xpr` projects are included.** The original `.xpr` files were stale — they referenced sources at a `../rtl_2/` directory that no longer exists — and were deliberately excluded. The headless flows above (`sim/*.do`, `system/run.do`, `freq_sweep/max_freq_sweep.tcl`) fully replace them.
 - **What is reproducible from this repo:** golden-vector generation, all 21 RTL regressions, the system-wrapper test, and the full 21-run synthesis/implementation/report sweep. **What is not:** a one-click Vivado GUI project (not shipped), and board-level I/O timing (the XDC false-paths I/O by design).
@@ -361,6 +396,7 @@ Runs the complete 21-run sweep (7 configurations × `NUM_KERNELS` ∈ {1,2,3}): 
 | Xilinx Vivado | Synthesis, implementation, timing/utilization/power reports |
 | Xilinx Zynq-7020 (xc7z020clg400-1) | Target FPGA; DSP48E1 MAC cascade |
 | Tcl | Vivado batch sweep flow |
+| GitHub Actions | Golden-model bit-exact regression CI |
 
 ## Team — FlipFlopers, Cairo University
 
@@ -374,6 +410,7 @@ Runs the complete 21-run sweep (7 configurations × `NUM_KERNELS` ∈ {1,2,3}): 
 
 License: not specified.
 
-## Full Report
+## Documentation
 
-The complete design, verification, DSE, and results write-up is in **[`doc/AI_Accelerator_Report.pdf`](doc/AI_Accelerator_Report.pdf)**.
+- [`doc/AI_Accelerator_Report.pdf`](doc/AI_Accelerator_Report.pdf) — full design, verification, DSE, and results write-up.
+- [`doc/2026_SSCS_Egypt_Competition_Announcement.pdf`](doc/2026_SSCS_Egypt_Competition_Announcement.pdf) — official competition specification.
