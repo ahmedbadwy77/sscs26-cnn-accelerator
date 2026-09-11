@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="images/team_logo.png" alt="Team FlipFlopers" width="560">
+
 # Streaming CNN Accelerator on Xilinx Zynq-7020
 
 **Parameterized N×N 2-D convolution core · DSP48E1 MAC cascade · 390.625 MHz routed operating point**
