@@ -27,25 +27,15 @@ wire signed [OUTPUT_WIDTH-1:0] cnn_output;
 assign busy = (state != IDLE) && (state != DONE);
 assign done = (state == DONE);
 
-// The CNN core produces one result for every streamed input pixel after fill.
-// For a 3x3 window, only the first IMG_WIDTH-N+1 positions of each row
-// are valid convolution outputs. The system filters the last N-1 positions.
-assign data_valid = cnn_data_valid && (output_phase < IMG_WIDTH - N + 1) &&
-                    (output_count < TOTAL_OUTPUTS);
+assign data_valid = cnn_data_valid && (output_phase < IMG_WIDTH - N + 1) && (output_count < TOTAL_OUTPUTS);
 assign output_data = cnn_output;
 
 assign cnn_en = (state == RUN);
 assign kernel_rd_en = (state == KERNEL_STREAM);
 
-assign cnn_input = (state == KERNEL_STREAM) ? kernel_memory[kernel_stream_count] :
-                   (state == RUN) ? image_memory[image_stream_count] : 'b0;
+assign cnn_input = (state == KERNEL_STREAM) ? kernel_memory[kernel_stream_count] : (state == RUN) ? image_memory[image_stream_count] : 'b0;
 
-cnn_top #(
-    .N(N),
-    .IMG_WIDTH(IMG_WIDTH),
-    .PIXEL_BITS(PIXEL_BITS),
-    .RELU_EN(RELU_EN)
-) cnn_core (
+cnn_top #(.N(N),.IMG_WIDTH(IMG_WIDTH),.PIXEL_BITS(PIXEL_BITS),.RELU_EN(RELU_EN)) cnn_core (
     .clk(clk),
     .rst(rst),
     .in_pixel(cnn_input),

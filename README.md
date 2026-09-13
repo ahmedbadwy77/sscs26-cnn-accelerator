@@ -4,11 +4,11 @@
 
 # Streaming CNN Accelerator on Xilinx Zynq-7020
 
-**Parameterized N×N 2-D convolution core · DSP48E1 MAC cascade · 390.625 MHz routed operating point**
+**Parameterized N×N 2-D convolution core · DSP48E1 MAC cascade · 400 MHz routed operating point**
 
 [![HDL](https://img.shields.io/badge/HDL-Verilog--2001-1e90ff)](rtl/)
 [![Python](https://img.shields.io/badge/Golden%20Model-Python%203-3776AB?logo=python&logoColor=white)](python/golden_model.py)
-[![Xilinx Vivado](https://img.shields.io/badge/Synthesis-Xilinx%20Vivado-E01F27)](freq_sweep/)
+[![Xilinx Vivado](https://img.shields.io/badge/Synthesis-Xilinx%20Vivado-E01F27)](doc/AI_Accelerator_Report.pdf)
 [![ModelSim](https://img.shields.io/badge/Simulation-ModelSim-00629B)](sim/)
 [![FPGA](https://img.shields.io/badge/FPGA-Zynq--7020-success)](https://www.amd.com/en/products/adaptive-socs-and-fpgas/zynq-7000-series.html)
 [![IEEE SSCS Egypt 2026](https://img.shields.io/badge/IEEE%20SSCS%20Egypt-2026%20Competition-e8710a)](doc/2026_SSCS_Egypt_Competition_Announcement.pdf)
@@ -25,7 +25,7 @@
 
 | LUTs | FFs | DSP48E1 | BRAM | MAX FREQ | Power | Throughput | FOM | Verification |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| **51** | **97** | **9** | **0** | **390.625 MHz** | **0.134 W** | **1 pixel/cycle** | **0.01490** | **2596/2596** |
+| **51** | **97** | **9** | **0** | **400 MHz** | **0.134 W** | **1 pixel/cycle** | **0.01490** | **2596/2596** |
 
 Bit-exact against an independent Python golden model across **21 regression configurations** (7 kernel/image/ReLU settings × 1–3 parallel kernels), routed and timed on `xc7z020clg400-1`.
 
@@ -39,7 +39,7 @@ Format follows the required reporting table of the competition announcement.
 
 | Parameter | Specification (competition) | Team Result | Units | Comments |
 |---|---|---|---|---|
-| Input image size | ≥ 32×32, grayscale / single-channel | 32×32 baseline; width parameterized | pixels | image widths 8/32/64 exercised in regression & sweep |
+| Input image size | ≥ 32×32, grayscale / single-channel | 32×32 baseline; width parameterized | pixels | image widths 8/32/64 exercised in the verification regression |
 | Input precision | Fixed-point unsigned (justify choice) | 8-bit unsigned | — | full-precision integer datapath; no input quantization |
 | Kernel precision | 8-bit signed fixed-point / integer | 8-bit signed two's complement | — | run-time programmable coefficients |
 | Kernel size | N×N, programmable coefficients | N=3 baseline; RTL verified N=3…7 | — | serial kernel load, reload between bursts |
@@ -51,8 +51,8 @@ Format follows the required reporting table of the competition announcement.
 | Pipeline stages | Pipelined convolution | Registered multiply + N²-stage cascade | — | staggered accumulation, absorbed by fill period |
 | Latency | — | **76 cycles** to first output pixel | cycles | FILL 66 + pipeline 10; equations parameterized by N, W |
 | Throughput | 1 pixel/cycle — **bonus** | **Met** | pixels/cycle | steady state; `NUM_KERNELS` replicates MAC/output per kernel |
-| FPGA utilization | LUTs / FFs / DSPs / BRAMs | **51 / 97 / 9 / 0** (routed) | — | `freq_sweep/runs/run_19_N3_W32_R1_K1_MAXFREQ/` |
-| Maximum frequency | Report | **390.625 MHz** at 2.56 ns constraint; WNS +0.007 ns, 0 failing endpoints | MHz | selected routed MAX-FREQ operating point — not derived from WNS |
+| FPGA utilization | LUTs / FFs / DSPs / BRAMs | **51 / 97 / 9 / 0** (routed) | — | `doc/AI_Accelerator_Report.pdf` |
+| Maximum frequency | Report | **400 MHz** at 2.5 ns constraint; WNS +0.005 ns, 0 failing endpoints | MHz | selected routed MAX-FREQ operating point — not derived from WNS |
 | Power estimate | Report | **0.134 W** (0.105 static + 0.029 dynamic) | W | Vivado tool estimate, low confidence (no SAIF switching activity) |
 | Verification status | Golden model (Python/MATLAB/C) | Python golden model — **2596/2596 bit-exact**, 7/7 matrix, 900-output system test | — | zero mismatches, zero X in valid windows |
 | FOM | Required formula | **0.01490** | — | 1 / [0.134 × (51 + 50×9 + 100×0)] |
@@ -104,7 +104,7 @@ For N=3 there are 9 taps and 9 DSP48E1 blocks; accumulation stays in the DSP cas
 - **Additions cost zero LUTs.** Each tap multiplies in its own DSP48E1 and hands its running sum to the next slice through the PCOUT→PCIN cascade — the nine additions never touch fabric.
 - **Zero BRAMs, minimal storage.** Line buffers and tap delays map to SRL primitives; forcing a datapath reset would re-map them to flip-flops and inflate both LUT and FF counts, so the datapath is deliberately reset-free (deterministic fill/flush protocol instead).
 - **Overflow impossible by construction.** OUT_W = 16 + ⌈log₂N²⌉ signed bits strictly exceeds the worst case N²·32,640 for every N.
-- **One RTL, many designs.** The same parameterized sources verify N=3…7 and K=1…3 — the sweep includes a 49-tap, 3-kernel configuration (163 LUTs, 147 DSPs) alongside the 51-LUT competition baseline.
+- **One RTL, many designs.** The same parameterized sources verify N=3…7 and K=1…3 alongside the 51-LUT competition baseline; the report documents the full resource-scaling study.
 - **Measured, not assumed.** The multiplier decision is backed by a routed DSP-free A/B build (792 LUTs, 143 MHz) that loses to the DSP design on FOM **even when each side is evaluated at its own MAX-FREQ operating point**.
 - **Warm-pipeline restart.** Bursts run back-to-back without re-resetting; the persistent-valid protocol eliminates inter-burst gaps in the output stream.
 - **Golden vectors under CI.** Every push regenerates all 21 expected-output files and verifies them byte-identically (badge at the top).
@@ -227,11 +227,11 @@ The bonus system wrapper is verified independently of the core regression above:
 
 ## Design-Space Exploration
 
-A DSP-free fabric multiplier/accumulator reference was implemented to validate the multiplier decision. **Each architecture is evaluated at its own routed MAX-FREQ operating point** (the DSP design closes 2.56 ns; the fabric reference closes 143 MHz).
+A DSP-free fabric multiplier/accumulator reference was implemented to validate the multiplier decision. **Each architecture is evaluated at its own routed MAX-FREQ operating point** (the DSP design closes 2.5 ns; the fabric reference closes 143 MHz).
 
 | Architecture | LUTs | FFs | DSPs | MAX FREQ | Power | FOM |
 |---|:-:|:-:|:-:|:-:|:-:|:-:|
-| **DSP48E1-based (selected)** | 51 | 97 | 9 | 390.625 MHz | 0.134 W | **0.01490** |
+| **DSP48E1-based (selected)** | 51 | 97 | 9 | 400 MHz | 0.134 W | **0.01490** |
 | DSP-free fabric reference | 792 | 441 | 0 | 143 MHz | 0.125 W | 0.01010 |
 
 DSP usage was **intentionally retained**: the DSP-based design uses ~15× fewer LUTs, runs at ~2.7× the frequency, and achieves a better FOM.
@@ -244,13 +244,13 @@ DSP usage was **intentionally retained**: the DSP-based design uses ~15× fewer 
 
 | Item | Value |
 |---|---|
-| Clock constraint | 2.56 ns |
-| MAX FREQ operating point | 390.625 MHz |
-| WNS | +0.007 ns |
-| WHS | +0.175 ns |
+| Clock constraint | 2.5 ns |
+| MAX FREQ operating point | 400 MHz |
+| WNS | +0.005 ns |
+| WHS | +0.138 ns |
 | Failing endpoints | 0 |
 
-**Note:** 390.625 MHz is the *selected routed MAX-FREQ operating point* for the 2.56 ns constraint — it is **not** derived by subtracting WNS from the target period. WNS (+0.007 ns) is timing margin only. The XDC exempts I/O timing (false paths on non-clock I/O); it is a core-Fmax benchmarking constraint, not board bring-up.
+**Note:** 400 MHz is the *selected routed MAX-FREQ operating point* for the 2.5 ns constraint — it is **not** derived by subtracting WNS from the target period. WNS (+0.005 ns) is timing margin only. The XDC exempts I/O timing (false paths on non-clock I/O); it is a core-Fmax benchmarking constraint, not board bring-up.
 
 ![Timing summary](images/timing_report.png)
 
@@ -300,7 +300,7 @@ Post-route placement on xc7z020clg400-1:
 | Golden model | ✅ `python/golden_model.py` (pure Python 3) |
 | Expected output files | ✅ `expected_outputs/` — 21 files, CI-regenerated |
 | Input test images / feature maps | ✅ generated on-the-fly by the testbench (LFSR, ramp, worst-case corner stimuli) rather than shipped as image files |
-| FPGA reports | ✅ `freq_sweep/` — 21 routed runs (timing / utilization / power / clocks) + summary CSV |
+| FPGA reports | ✅ routed utilization / timing / power evidence summarized in `doc/AI_Accelerator_Report.pdf` |
 | Project report | ✅ `doc/AI_Accelerator_Report.pdf` |
 | Competition announcement | ✅ `doc/2026_SSCS_Egypt_Competition_Announcement.pdf` |
 | Edge-detection / inspection demo (optional bonus) | ✅ **Supported** — [demo/edge_detection_demo.py](demo/edge_detection_demo.py) loads the Sobel operators into the runtime-programmable kernel bank and ships the expected outputs for a 32×32 test scene |
@@ -332,15 +332,11 @@ Post-route placement on xc7z020clg400-1:
 │   ├── edge_detection_demo.py    #   Sobel Gx/Gy through the same fixed-point contract
 │   ├── test_image_32x32.txt      #   deterministic 32×32 input scene
 │   └── expected_sobel_*.txt      #   expected RTL outputs (raw + ReLU-clamped)
-├── constrains/
-│   └── timing_constraints.xdc    # 2.56 ns clock constraint, I/O settings
+├── constraints/
+│   └── timing_constraints.xdc    # clock constraints + I/O settings
 ├── python/
 │   └── golden_model.py           # pure-Python-3 golden reference model
 ├── expected_outputs/             # 21 golden output vector files (generated by golden_model.py)
-├── freq_sweep/                   # Vivado MAX-FREQ characterization sweep (fixed 2.56 ns)
-│   ├── max_freq_sweep.tcl        #   21-run synthesis + implementation batch script
-│   ├── max_freq_results.csv      #   summary: LUT/FF/DSP/BRAM/power/WNS/FOM per run
-│   └── runs/                     #   per-run clocks/timing/utilization/power reports
 ├── doc/
 │   ├── AI_Accelerator_Report.pdf            # full project report
 │   └── 2026_SSCS_Egypt_Competition_Announcement.pdf  # competition specification
@@ -352,7 +348,7 @@ Post-route placement on xc7z020clg400-1:
 
 ## How to Run
 
-Prerequisites: **Python 3**, **ModelSim** (Intel FPGA Edition), **Xilinx Vivado**. All paths below are relative to the repository root.
+Prerequisites: **Python 3** and **ModelSim** (Intel FPGA Edition). All paths below are relative to the repository root.
 
 ### 1. Python golden model
 
@@ -381,16 +377,7 @@ vsim -do run.do
 
 Compiles the RTL plus `cnn_system.v` / `cnn_system_tb.v` and prints the system test verdict.
 
-### 4. Vivado synthesis / implementation / reports (MAX-FREQ sweep)
-
-```bash
-cd freq_sweep
-vivado -mode batch -source max_freq_sweep.tcl
-```
-
-Runs the complete 21-run sweep (7 configurations × `NUM_KERNELS` ∈ {1,2,3}): per run it reads `../rtl/*.v`, runs `synth_design -top cnn_top` with generics on **xc7z020clg400-1**, applies the fixed **2.56 ns** operating point, runs `opt_design → place_design → phys_opt_design → route_design`, and writes per-run timing/utilization/power/clock reports under `runs/`, plus the summary `max_freq_results.csv`.
-
-### 5. Edge-detection demo (bonus)
+### 4. Edge-detection demo (bonus)
 
 ```bash
 cd demo
@@ -399,19 +386,19 @@ python edge_detection_demo.py
 
 Loads the Sobel operators through the same fixed-point contract as the accelerator and regenerates the test image plus all four expected-output files (Sobel Gx/Gy, raw and ReLU-clamped).
 
-### 6. Continuous integration
+### 5. Continuous integration
 
 Every push that touches the golden model or expected outputs triggers the **Golden Model Verification** workflow: it regenerates all 21 vectors on GitHub Actions and fails unless they match the committed files bit-exactly (line-ending normalized). Status badge: top of this README.
 
 ## Reproducibility Notes
 
-- **FPGA part:** xc7z020clg400-1, fixed in `max_freq_sweep.tcl` and in the checked-in reports.
+- **FPGA part:** xc7z020clg400-1, fixed for all implementation runs (see the report PDF).
 - **Baseline parameters:** N=3, IMG_WIDTH=32, PIXEL_BITS=8, RELU_EN=1, NUM_KERNELS=1.
-- **Tool versions:** the archived runs in this repository were produced with **Vivado v2019.1 (SW Build 2552052)** and **ModelSim – Intel FPGA Edition 2020.1** (per the run logs of the original project environment). The final report (`doc/AI_Accelerator_Report.pdf`) cites the **Vivado 2026** toolchain for the submission build. Both facts are stated as-is.
-- **Source-controlled inputs:** all RTL, testbenches, sim/system scripts, the XDC, the Python golden model, all 21 golden expected-output files, the sweep TCL + CSV + per-run reports, the report PDF, the competition announcement, and the evidence images.
+- **Tool versions:** the implementation results reported here and in the report PDF were produced with **Vivado v2019.1 (SW Build 2552052)**; simulation used **ModelSim – Intel FPGA Edition 2020.1**. The report additionally cites the **Vivado 2026** toolchain for the submission build. Both facts are stated as-is.
+- **Source-controlled inputs:** all RTL, testbenches, sim/system scripts, the XDC, the Python golden model, all 21 golden expected-output files, the report PDF, the competition announcement, and the evidence images.
 - **Generated artifacts** (ModelSim `work/` libraries, `*.wlf`, transcripts, Vivado journals/logs/backups) are intentionally **not** committed — they are rebuilt by the commands above and covered by `.gitignore`.
-- **No Vivado `.xpr` projects are included.** The original `.xpr` files were stale — they referenced sources at a `../rtl_2/` directory that no longer exists — and were deliberately excluded. The headless flows above (`sim/*.do`, `system/run.do`, `freq_sweep/max_freq_sweep.tcl`) fully replace them.
-- **What is reproducible from this repo:** golden-vector generation, all 21 RTL regressions, the system-wrapper test, and the full 21-run synthesis/implementation/report sweep. **What is not:** a one-click Vivado GUI project (not shipped), and board-level I/O timing (the XDC false-paths I/O by design).
+- **No Vivado `.xpr` projects are included.** The original `.xpr` files were stale — they referenced sources at a `../rtl_2/` directory that no longer exists — and were deliberately excluded. The headless flows above (`sim/*.do`, `system/run.do`) fully replace them.
+- **What is reproducible from this repo:** golden-vector generation, all 21 RTL regressions, the system-wrapper test, and the Sobel edge-detection demo. **What is not:** the Vivado synthesis/implementation flow (removed from the repo — implementation evidence lives in the report PDF), a one-click Vivado GUI project, and board-level I/O timing (the XDC false-paths I/O by design).
 
 ## Tools & Technologies
 
