@@ -22,3 +22,6 @@ xsim.dir/
 work/
 *.wlf
 transcript
+
+# ModelSim vendor boilerplate (auto-regenerated locally)
+modelsim.ini

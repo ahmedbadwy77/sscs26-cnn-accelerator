@@ -321,7 +321,7 @@ Post-route placement on xc7z020clg400-1:
 │   └── output_stage.v            #   optional ReLU + output gating (×NUM_KERNELS)
 ├── tb/
 │   └── cnn_top_tb.v              # self-checking core testbench (golden-file comparison)
-├── sim/                          # 21 ModelSim regression scripts + modelsim.ini
+├── sim/                          # 21 ModelSim regression scripts
 │   ├── run_3x32relu_k1.do        #   baseline regression (N=3 W=32 ReLU=1 K=1)
 │   └── run_<N>x<W>[relu]_k<K>.do #   remaining 20 configurations
 ├── system/                       # BONUS system-level integration
