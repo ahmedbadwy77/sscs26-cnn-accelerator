@@ -1,6 +1,10 @@
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+DATA_DIR = HERE / "data"
+EXPECTED_DIR = HERE / "expected"
+DATA_DIR.mkdir(exist_ok=True)
+EXPECTED_DIR.mkdir(exist_ok=True)
 IMG_W = 32
 N = 3
 
@@ -47,7 +51,7 @@ def relu(v):
 def main():
     img = make_test_image()
 
-    img_path = HERE / "test_image_32x32.txt"
+    img_path = DATA_DIR / "test_image_32x32.txt"
     img_path.write_text(
         "\n".join(str(v) for row in img for v in row) + "\n",
         encoding="utf-8", newline="\n",
@@ -65,7 +69,7 @@ def main():
         "expected_sobel_gy_relu.txt": gy_relu,
     }
     for name, values in outputs.items():
-        p = HERE / name
+        p = EXPECTED_DIR / name
         p.write_text(
             "\n".join(str(v) for v in values) + "\n",
             encoding="utf-8", newline="\n",
