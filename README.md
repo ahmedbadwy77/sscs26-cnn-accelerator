@@ -13,7 +13,7 @@
 [![FPGA](https://img.shields.io/badge/FPGA-Zynq--7020-success)](https://www.amd.com/en/products/adaptive-socs-and-fpgas/zynq-7000-series.html)
 [![IEEE SSCS Egypt 2026](https://img.shields.io/badge/IEEE%20SSCS%20Egypt-2026%20Competition-e8710a)](doc/2026_SSCS_Egypt_Competition_Announcement.pdf)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
-[![Golden Model CI](https://github.com/ahmedbadwy77/streaming-cnn-accelerator-zynq7020/actions/workflows/golden-model.yml/badge.svg)](../../actions/workflows/golden-model.yml)
+[![Golden Model CI](https://github.com/ahmedbadwy77/sscs26-cnn-accelerator/actions/workflows/golden-model.yml/badge.svg)](../../actions/workflows/golden-model.yml)
 
 *Developed for the IEEE SSCS Egypt Chapter 2026 Student Design Competition*
 
