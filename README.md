@@ -154,14 +154,7 @@ SOBEL Gx            SOBEL Gy
 
 ![Hardware edge-detection demonstration](images/hardware_edge_demo.png)
 
-**Visual results** on the deterministic 32x32 test scene (bright block + diagonal step over a horizontal ramp):
-
-| | |
-|---|---|
-| ![Original 32x32 test scene](images/test_image_preview.png) | ![Sobel Gx + ReLU - vertical edges](images/sobel_gx_preview.png) |
-| *Original 32x32 scene* | *Sobel Gx + ReLU: vertical edges* |
-| ![Sobel Gy + ReLU - horizontal edges](images/sobel_gy_preview.png) | ![ModelSim regression transcript](images/sobel_verification.png) |
-| *Sobel Gy + ReLU: horizontal edges* | *ModelSim transcript: 900/900 outputs, SOBEL TEST PASSED* |
+![ModelSim regression transcript - 900/900 outputs, SOBEL TEST PASSED](images/sobel_verification.png)
 
 Regenerate everything with `python edge_detection_demo.py` and `python visualize_demo.py`; re-run the RTL regression with `cd demo/sim && vsim -c -do run_sobel_gx.do` (see [How to Run](#how-to-run)).
 
