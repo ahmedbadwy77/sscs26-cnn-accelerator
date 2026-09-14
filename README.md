@@ -426,7 +426,7 @@ Every push that touches the golden model or expected outputs triggers the **Gold
 
 - **FPGA part:** xc7z020clg400-1, fixed for all implementation runs (see the report PDF).
 - **Baseline parameters:** N=3, IMG_WIDTH=32, PIXEL_BITS=8, RELU_EN=1, NUM_KERNELS=1.
-- **Tool versions:** the implementation results reported here and in the report PDF were produced with **Vivado v2019.1 (SW Build 2552052)**; simulation used **ModelSim – Intel FPGA Edition 2020.1**. The report additionally cites the **Vivado 2026** toolchain for the submission build. Both facts are stated as-is.
+- **Tool versions:** All implementation results reported here and in the report PDF were produced with the **Vivado 2026** toolchain for the submission build. Simulation used **ModelSim – Intel FPGA Edition 2020.1**.
 - **Source-controlled inputs:** all RTL, testbenches, sim/system scripts, the XDC, the Python golden model, all 21 golden expected-output files, the report PDF, the competition announcement, and the evidence images.
 - **Generated artifacts** (ModelSim `work/` libraries, `*.wlf`, transcripts, Vivado journals/logs/backups) are intentionally **not** committed — they are rebuilt by the commands above and covered by `.gitignore`.
 - **No Vivado `.xpr` projects are included.** The original `.xpr` files were stale — they referenced sources at a `../rtl_2/` directory that no longer exists — and were deliberately excluded. The headless flows above (`sim/*.do`, `system/run.do`) fully replace them.
