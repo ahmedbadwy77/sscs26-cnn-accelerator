@@ -6,9 +6,6 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 
-# Layout-aware paths - works with both folder structures:
-#   reorganized: demo/data/, demo/expected/, output -> docs/images/
-#   flat:        demo/*.txt,          output -> images/
 DATA_DIR = HERE / "data" if (HERE / "data").is_dir() else HERE
 EXPECTED_DIR = HERE / "expected" if (HERE / "expected").is_dir() else HERE
 DOCS_DIR = HERE.parent / "docs"

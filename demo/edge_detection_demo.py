@@ -1,23 +1,3 @@
-"""Edge-detection demonstration for the streaming CNN convolution accelerator.
-
-The competition core performs signed N-by-N convolution with runtime-programmable
-8-bit coefficients. Loading the classic Sobel operators turns the SAME datapath
-into a 3x3 edge detector - no RTL changes are required.
-
-This script produces, for a deterministic 32x32 test image:
-  - the input image (one 0..255 pixel value per line)
-  - expected RTL outputs for Sobel Gx and Gy (valid padding, stride 1 -> 30x30)
-  - the same gradients with the ReLU clamp applied (RELU_EN=1 behavior)
-
-Fixed-point contract is identical to the accelerator:
-  pixel 8-bit unsigned, kernel 8-bit signed, products 17-bit signed,
-  full-precision accumulation in 20 bits (no truncation/rounding/saturation).
-Worst-case |accumulation| for Sobel = 8*255 = 2040 << 2^19, so the 20-bit
-output cannot overflow - consistent with the core's bit-width analysis.
-
-Run:  python edge_detection_demo.py
-"""
-
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -29,8 +9,6 @@ SOBEL_GY = [-1, -2, -1, 0, 0, 0, 1, 2, 1]
 
 
 def make_test_image():
-    """Deterministic 32x32 grayscale scene: bright rectangle on a horizontal
-    ramp plus a diagonal step, so both operators see real edges."""
     px = []
     for y in range(IMG_W):
         row = []
@@ -46,17 +24,11 @@ def make_test_image():
 
 
 def to_signed_byte(v):
-    """8-bit two's-complement storage semantics, matching kernel_coeff_memory."""
     v &= 0xFF
     return v - 256 if v >= 128 else v
 
 
 def conv3x3_valid(img, kernel):
-    """Signed valid-padding stride-1 3x3 convolution, full-precision accumulation.
-
-    Coefficient j multiplies the window tap sharing its (row, col) offset -
-    the same positional mapping the RTL uses between kernels_flat and window_flat.
-    """
     out = []
     for y in range(IMG_W - N + 1):
         for x in range(IMG_W - N + 1):
