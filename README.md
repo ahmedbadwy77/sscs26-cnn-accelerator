@@ -148,6 +148,12 @@ SOBEL Gx            SOBEL Gy
 
 **Bit-exact ModelSim verification.** A dedicated self-checking testbench (`demo/sim/tb_sobel_demo.v`) loads these coefficients and the 32x32 test scene through the real kernel/image memory protocol and compares every valid strobe against the Python golden files: **4/4 configurations (Sobel Gx/Gy x ReLU off/on), 900/900 outputs each, 3,600/3,600 values bit-exact, zero mismatches** - `SOBEL TEST PASSED`.
 
+![Sobel regression transcript](images/sobel_sim_transcript.png)
+
+**Hardware demonstration.** The report also documents the edge-detection flow executed on the programmed design - the test scene and its Gx/Gy edge maps at 30x30:
+
+![Hardware edge-detection demonstration](images/hardware_edge_demo.png)
+
 **Visual results** on the deterministic 32x32 test scene (bright block + diagonal step over a horizontal ramp):
 
 | | |
@@ -307,6 +313,7 @@ Post-route placement on xc7z020clg400-1:
 | ![DSP cascade](images/dsp_cascade.png) | ![Multiplier architectures](images/multiplier_architectures.png) |
 | ![DSP vs DSP-free A/B](images/dsp_vs_dspfree_ab.png) | ![DSP vs fabric architectures](images/dsp_vs_fabric_arch.png) |
 | ![SRL vs FF storage](images/srl_vs_ff_storage.png) | ![Device routing](images/device_routing.png) |
+| ![Design Runs summary](images/design_runs_summary.png) | |
 
 </details>
 
