@@ -329,9 +329,12 @@ Post-route placement on xc7z020clg400-1:
 │   ├── cnn_system_tb.v           #   system testbench
 │   └── run.do                    #   system simulation script
 ├── demo/                         # BONUS edge-detection demonstration
-│   ├── edge_detection_demo.py    #   Sobel Gx/Gy through the same fixed-point contract
-│   ├── test_image_32x32.txt      #   deterministic 32×32 input scene
-│   └── expected_sobel_*.txt      #   expected RTL outputs (raw + ReLU-clamped)
+│   ├── edge_detection_demo.py    #   Sobel Gx/Gy golden model (writes data/ + expected/)
+│   ├── visualize_demo.py         #   renders the numbers as PNG images
+│   ├── data/
+│   │   └── test_image_32x32.txt  #   deterministic 32×32 input scene
+│   ├── expected/                 #   golden outputs (raw + ReLU-clamped)
+│   └── sim/                      #   ModelSim regression: tb_sobel_demo.v + run_sobel_*.do
 ├── constraints/
 │   └── timing_constraints.xdc    # clock constraints + I/O settings
 ├── python/
@@ -382,9 +385,19 @@ Compiles the RTL plus `cnn_system.v` / `cnn_system_tb.v` and prints the system t
 ```bash
 cd demo
 python edge_detection_demo.py
+python visualize_demo.py
 ```
 
-Loads the Sobel operators through the same fixed-point contract as the accelerator and regenerates the test image plus all four expected-output files (Sobel Gx/Gy, raw and ReLU-clamped).
+Loads the Sobel operators through the same fixed-point contract as the accelerator, regenerates the test image plus all four expected-output files (Sobel Gx/Gy, raw and ReLU-clamped), and renders them as PNG previews.
+
+ModelSim regression of the same edge-detection flow:
+
+```bash
+cd demo/sim
+vsim -c -do run_sobel_gx.do   # + run_sobel_gx_relu.do, run_sobel_gy.do, run_sobel_gy_relu.do
+```
+
+Each script compiles the live RTL, streams the Sobel coefficients and the test image through `cnn_system`, and checks all 900 outputs against the golden files.
 
 ### 5. Continuous integration
 

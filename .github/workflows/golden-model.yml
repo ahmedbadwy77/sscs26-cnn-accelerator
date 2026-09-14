@@ -65,14 +65,14 @@ jobs:
       - name: Edge-detection demo regression (bonus)
         run: |
           mkdir -p /tmp/committed_demo
-          for f in demo/expected_*.txt; do
+          for f in demo/expected/*.txt; do
             sed 's/\r$//' "$f" > "/tmp/committed_demo/$(basename "$f")"
           done
           cd demo
           python edge_detection_demo.py
           cd ..
           fail=0
-          for f in demo/expected_*.txt; do
+          for f in demo/expected/*.txt; do
             b=$(basename "$f")
             sed 's/\r$//' "$f" > /tmp/demo_regen.txt
             if ! diff -q "/tmp/committed_demo/$b" /tmp/demo_regen.txt > /dev/null 2>&1; then
