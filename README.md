@@ -127,9 +127,17 @@ The streaming datapath (line buffers → sliding window → tap-delay alignment 
 
 ![System architecture](images/system_architecture.png)
 
-### Edge-Detection Demonstration — Bonus Feature
+### Edge-Detection Demonstration - Bonus Feature
 
-The kernel bank is **runtime-programmable**, so the same verified datapath doubles as an edge detector: load the classic 3×3 Sobel operators (8-bit signed) and stream a frame — **no RTL changes**. `demo/` contains a deterministic 32×32 test scene plus the Sobel Gx/Gy expected outputs (raw and ReLU-clamped; 30×30 = 900 outputs each), computed under the identical fixed-point contract (8u pixel / 8s kernel / 17-bit products / 20-bit full-precision accumulation — Sobel worst case 8×255 = 2,040 ≪ 2¹⁹, so overflow stays impossible).
+The competition asks for a programmable convolution engine - and that same property turns the core into an image-processing block. Because the 3x3 kernel bank is **runtime-programmable** and accepts **signed 8-bit coefficients**, loading the two classic Sobel operators converts the datapath into a gradient/edge detector: **no RTL changes, no rebuild, no extra hardware** - the coefficients stream in exactly like any CNN kernel.
+
+**How it works**
+
+1. The host streams the 9 Sobel coefficients into the kernel bank over the normal serial load protocol.
+2. The 32x32 frame is streamed through the line buffers; from the first complete window onward, the core produces one full 3x3 convolution result per clock.
+3. Sobel Gx responds to vertical intensity gradients, Sobel Gy to horizontal ones; with `RELU_EN=1` the negative half is clamped to zero, leaving clean edge magnitudes. Overflow stays impossible by construction (Sobel worst case 8x255 = 2,040, far below the 20-bit output capacity).
+
+**Kernels used** (8-bit signed, streamed row-major):
 
 ```text
 SOBEL Gx            SOBEL Gy
@@ -138,7 +146,18 @@ SOBEL Gx            SOBEL Gy
 [-1  0  +1]         [+1 +2 +1]
 ```
 
-Regenerate with: `python edge_detection_demo.py` (see [How to Run](#how-to-run)).
+**Bit-exact ModelSim verification.** A dedicated self-checking testbench (`demo/sim/tb_sobel_demo.v`) loads these coefficients and the 32x32 test scene through the real kernel/image memory protocol and compares every valid strobe against the Python golden files: **4/4 configurations (Sobel Gx/Gy x ReLU off/on), 900/900 outputs each, 3,600/3,600 values bit-exact, zero mismatches** - `SOBEL TEST PASSED`.
+
+**Visual results** on the deterministic 32x32 test scene (bright block + diagonal step over a horizontal ramp):
+
+| | |
+|---|---|
+| ![Original 32x32 test scene](images/test_image_preview.png) | ![Sobel Gx + ReLU - vertical edges](images/sobel_gx_preview.png) |
+| *Original 32x32 scene* | *Sobel Gx + ReLU: vertical edges* |
+| ![Sobel Gy + ReLU - horizontal edges](images/sobel_gy_preview.png) | ![ModelSim regression transcript](images/sobel_verification.png) |
+| *Sobel Gy + ReLU: horizontal edges* | *ModelSim transcript: 900/900 outputs, SOBEL TEST PASSED* |
+
+Regenerate everything with `python edge_detection_demo.py` and `python visualize_demo.py`; re-run the RTL regression with `cd demo/sim && vsim -c -do run_sobel_gx.do` (see [How to Run](#how-to-run)).
 
 ## Throughput and Latency
 
