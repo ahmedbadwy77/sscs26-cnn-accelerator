@@ -154,8 +154,6 @@ SOBEL Gx            SOBEL Gy
 
 ![Hardware edge-detection demonstration](images/hardware_edge_demo.png)
 
-![ModelSim regression transcript - 900/900 outputs, SOBEL TEST PASSED](images/sobel_verification.png)
-
 Regenerate everything with `python edge_detection_demo.py` and `python visualize_demo.py`; re-run the RTL regression with `cd demo/sim && vsim -c -do run_sobel_gx.do` (see [How to Run](#how-to-run)).
 
 ## Throughput and Latency
