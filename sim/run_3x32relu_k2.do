@@ -11,7 +11,7 @@ vlog -work work +acc ../rtl/line_buffer.v
 vlog -work work +acc ../rtl/window_nxn.v
 vlog -work work +acc ../rtl/tree_nxn.v
 vlog -work work +acc ../rtl/output_stage.v
-vlog -work work +acc ../tb/cnn_top_tb.v
+vlog -work work +acc ../tb/cnn_top_tb.sv
 
 vsim -voptargs=+acc work.cnn_top_tb -gIMG_WIDTH=32 -gRELU_EN=1 -gN=3 -gNUM_KERNELS=2 -gPIXEL_BITS=8
 

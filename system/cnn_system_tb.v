@@ -12,37 +12,17 @@ localparam OUTPUT_WIDTH = 2 * PIXEL_BITS + $clog2(TOTAL_TAPS);
 localparam OUTPUT_SIZE = IMG_WIDTH - N + 1;
 localparam TOTAL_OUTPUTS = OUTPUT_SIZE * OUTPUT_SIZE;
 
-reg clk;
-reg rst;
-reg start;
+reg clk , rst , start , kernel_we , image_we;
 
-reg kernel_we;
 reg [PIXEL_BITS-1:0] kernel_data;
-
-reg image_we;
 reg [PIXEL_BITS-1:0] image_data;
 
-wire busy;
-wire done;
-wire data_valid;
+wire busy , done , data_valid;
 wire signed [OUTPUT_WIDTH-1:0] output_data;
 
-integer i;
-integer row_index;
-integer column_index;
-integer tap_row;
-integer tap_column;
-integer output_count;
-integer expected_value;
-integer actual_value;
-integer error_count;
+integer i , row_index , column_index , tap_row , tap_column , output_count , expected_value , actual_value , error_count;
 
-cnn_system #(
-    .N(N),
-    .IMG_WIDTH(IMG_WIDTH),
-    .PIXEL_BITS(PIXEL_BITS),
-    .RELU_EN(RELU_EN)
-) dut (
+cnn_system #(.N(N),.IMG_WIDTH(IMG_WIDTH),.PIXEL_BITS(PIXEL_BITS),.RELU_EN(RELU_EN)) dut (
     .clk(clk),
     .rst(rst),
     .start(start),
@@ -56,49 +36,52 @@ cnn_system #(
     .output_data(output_data)
 );
 
-always #5 clk = ~clk;
+initial
+    clk = 1'b0;
+always #1.25 clk = ~clk;
 
 initial begin
-    clk = 0;
-    rst = 0;
-    start = 0;
-    kernel_we = 0;
-    kernel_data = 0;
-    image_we = 0;
-    image_data = 0;
+    rst = 1'b0;
+    start = 1'b0;
+    kernel_we = 1'b0;
+    kernel_data = 'b0;
+    image_we = 1'b0;
+    image_data = 'b0;
     output_count = 0;
     error_count = 0;
 
-    #20;
-    rst = 1;
+    #5.75 rst = 1'b1;
+
+    #10; // Wait 4 clock cycles (10 ns)
 
     // Load an all-ones kernel.
     for (i = 0; i < TOTAL_TAPS; i = i + 1) begin
         @(negedge clk);
-        kernel_we = 1;
-        kernel_data = 1;
+        kernel_we = 1'b1;
+        kernel_data = 8'd1;
     end
 
     @(negedge clk);
-    kernel_we = 0;
-    kernel_data = 0;
+    kernel_we = 1'b0;
+    kernel_data = 'b0;
 
     // Load the image as an 8-bit ramp. Values above 255 wrap naturally.
     for (i = 0; i < IMG_WIDTH * IMG_WIDTH; i = i + 1) begin
         @(negedge clk);
-        image_we = 1;
+        image_we = 1'b1;
         image_data = i[PIXEL_BITS-1:0];
     end
 
     @(negedge clk);
-    image_we = 0;
-    image_data = 0;
+    image_we = 1'b0;
+    image_data = 'b0;
 
     // Start inference.
     @(negedge clk);
-    start = 1;
+    start = 1'b1;
+    
     @(negedge clk);
-    start = 0;
+    start = 1'b0;
 
     wait(done);
     @(negedge clk);
@@ -125,7 +108,7 @@ initial begin
 end
 
 always @(posedge clk) begin
-    if (data_valid) begin
+    if (rst && data_valid === 1'b1) begin
         row_index = output_count / OUTPUT_SIZE;
         column_index = output_count % OUTPUT_SIZE;
 
@@ -158,7 +141,7 @@ always @(posedge clk) begin
 end
 
 initial begin
-    #200000;
+    #50000;
     $display("ERROR: TIMEOUT");
     $finish;
 end

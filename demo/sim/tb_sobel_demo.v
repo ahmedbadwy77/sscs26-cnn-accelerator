@@ -1,49 +1,25 @@
 `timescale 1ns/1ps
+
 module tb_sobel_demo;
 
-parameter N = 3;
-parameter IMG_WIDTH = 32;
-parameter PIXEL_BITS = 8;
-parameter RELU_EN = 0;
+parameter N = 3 , IMG_WIDTH = 32 , PIXEL_BITS = 8 , RELU_EN = 0;
 
-localparam TOTAL_TAPS = N * N;
-localparam OUTPUT_WIDTH = 2 * PIXEL_BITS + $clog2(TOTAL_TAPS);
-localparam OUTPUT_SIZE = IMG_WIDTH - N + 1;
-localparam TOTAL_OUTPUTS = OUTPUT_SIZE * OUTPUT_SIZE;
-localparam TOTAL_PIXELS = IMG_WIDTH * IMG_WIDTH;
+localparam TOTAL_TAPS = N * N , OUTPUT_WIDTH = 2 * PIXEL_BITS + $clog2(TOTAL_TAPS) ,
+           OUTPUT_SIZE = IMG_WIDTH - N + 1 , TOTAL_OUTPUTS = OUTPUT_SIZE * OUTPUT_SIZE ,
+           TOTAL_PIXELS = IMG_WIDTH * IMG_WIDTH;
 
-reg clk;
-reg rst;
-reg start;
-reg kernel_we;
-reg image_we;
-reg [PIXEL_BITS-1:0] kernel_data;
-reg [PIXEL_BITS-1:0] image_data;
-
-wire busy;
-wire done;
-wire data_valid;
-wire signed [OUTPUT_WIDTH-1:0] output_data;
-
+reg clk , rst , start , kernel_we , image_we;
+reg [PIXEL_BITS-1:0] kernel_data , image_data;
 reg [7:0] sobel_kernel [0:TOTAL_TAPS-1];
 reg [7:0] image_mem [0:TOTAL_PIXELS-1];
+reg [8*64:1] kernel_file , expected_file;
 
-reg [8*64:1] kernel_file;
-reg [8*64:1] expected_file;
+wire busy , done , data_valid;
+wire signed [OUTPUT_WIDTH-1:0] output_data;
 
-integer fd_exp;
-integer scan_code;
-integer expected_value;
-integer i;
-integer errors;
-integer outputs_seen;
+integer fd_exp , scan_code , expected_value , i , errors , outputs_seen;
 
-cnn_system #(
-    .N(N),
-    .IMG_WIDTH(IMG_WIDTH),
-    .PIXEL_BITS(PIXEL_BITS),
-    .RELU_EN(RELU_EN)
-) dut (
+cnn_system #(.N(N),.IMG_WIDTH(IMG_WIDTH),.PIXEL_BITS(PIXEL_BITS),.RELU_EN(RELU_EN)) dut (
     .clk(clk),
     .rst(rst),
     .start(start),
@@ -57,11 +33,19 @@ cnn_system #(
     .output_data(output_data)
 );
 
-always #5 clk = ~clk;
+initial
+    clk = 1'b0;
+always #1.25 clk = ~clk;
 
 initial begin
-    clk = 0; rst = 0; start = 0; kernel_we = 0; image_we = 0;
-    kernel_data = 0; image_data = 0; errors = 0; outputs_seen = 0;
+    rst = 1'b0;
+    start = 1'b0;
+    kernel_we = 1'b0;
+    image_we = 1'b0;
+    kernel_data = 'b0;
+    image_data = 'b0;
+    errors = 0;
+    outputs_seen = 0;
 
     if (!$value$plusargs("kernel=%s", kernel_file)) begin
         $display("ERROR: +kernel=<hexfile> plusarg required");
@@ -76,41 +60,42 @@ initial begin
     $readmemh("test_image_32x32.hex", image_mem);
     $display("DEBUG: kernel[0]=%0d kernel[4]=%0d kernel[8]=%0d", sobel_kernel[0], sobel_kernel[4], sobel_kernel[8]);
     $display("DEBUG: image preloaded from test_image_32x32.hex");
+
     fd_exp = $fopen(expected_file, "r");
     if (fd_exp == 0) begin
         $display("ERROR: cannot open expected file");
         $finish;
     end
 
-    #20;
-    rst = 1;
+    #5.75 rst = 1'b1;
 
-    // Stream the 9 Sobel coefficients into kernel memory (demo stream order).
+    #10;
+
     for (i = 0; i < TOTAL_TAPS; i = i + 1) begin
         @(negedge clk);
-        kernel_we = 1;
+        kernel_we = 1'b1;
         kernel_data = sobel_kernel[i];
     end
     @(negedge clk);
-    kernel_we = 0;
-    kernel_data = 0;
+    kernel_we = 1'b0;
+    kernel_data = 'b0;
 
     // Stream the 32x32 test image into image memory.
     for (i = 0; i < TOTAL_PIXELS; i = i + 1) begin
         @(negedge clk);
-        image_we = 1;
+        image_we = 1'b1;
         image_data = image_mem[i];
     end
     @(negedge clk);
-    image_we = 0;
-    image_data = 0;
+    image_we = 1'b0;
+    image_data = 'b0;
     $display("DEBUG: image[0]=%0d image[1]=%0d image[1023]=%0d", image_mem[0], image_mem[1], image_mem[1023]);
 
     // Start inference.
     @(negedge clk);
-    start = 1;
+    start = 1'b1;
     @(negedge clk);
-    start = 0;
+    start = 1'b0;
 
     wait (done);
     @(negedge clk);
@@ -153,7 +138,7 @@ always @(posedge clk) begin
 end
 
 initial begin
-    #2000000;
+    #500000; // Scaled timeout for 2.5ns clock (equivalent to 200,000 clock cycles)
     $display("ERROR: TIMEOUT");
     $finish;
 end

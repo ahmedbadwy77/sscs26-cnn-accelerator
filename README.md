@@ -313,7 +313,7 @@ Post-route placement on xc7z020clg400-1:
 | Deliverable (per announcement) | Status |
 |---|---|
 | RTL source files | ✅ `rtl/` (7 modules) + `system/cnn_system.v` |
-| Testbench | ✅ `tb/cnn_top_tb.v` + `system/cnn_system_tb.v` |
+| Testbench | ✅ `tb/cnn_top_tb.sv` + `system/cnn_system_tb.v` |
 | Golden model | ✅ `python/golden_model.py` (pure Python 3) |
 | Expected output files | ✅ `expected_outputs/` — 21 files, CI-regenerated |
 | Input test images / feature maps | ✅ generated on-the-fly by the testbench (LFSR, ramp, worst-case corner stimuli) rather than shipped as image files |
@@ -337,7 +337,7 @@ Post-route placement on xc7z020clg400-1:
 │   ├── tree_nxn.v                #   tap-delay + DSP48E1 MAC cascade (×NUM_KERNELS)
 │   └── output_stage.v            #   optional ReLU + output gating (×NUM_KERNELS)
 ├── tb/
-│   └── cnn_top_tb.v              # self-checking core testbench (golden-file comparison)
+│   └── cnn_top_tb.sv              # self-checking core testbench (SystemVerilog, golden-file comparison)
 ├── sim/                          # 21 ModelSim regression scripts
 │   ├── run_3x32relu_k1.do        #   baseline regression (N=3 W=32 ReLU=1 K=1)
 │   └── run_<N>x<W>[relu]_k<K>.do #   remaining 20 configurations
@@ -386,7 +386,7 @@ cd sim
 vsim -do run_3x32relu_k1.do
 ```
 
-Each `run_*.do` script compiles `../rtl/*.v` and `../tb/cnn_top_tb.v` into `work`, then runs `work.cnn_top_tb` with `-g` parameter overrides (baseline: `-gN=3 -gIMG_WIDTH=32 -gRELU_EN=1 -gNUM_KERNELS=1 -gPIXEL_BITS=8`). The testbench loads its golden vectors from `expected_outputs/` and prints the RTL-vs-Python verdict. The other 20 scripts run the remaining configurations the same way.
+Each `run_*.do` script compiles `../rtl/*.v` and `../tb/cnn_top_tb.sv` into `work`, then runs `work.cnn_top_tb` with `-g` parameter overrides (baseline: `-gN=3 -gIMG_WIDTH=32 -gRELU_EN=1 -gNUM_KERNELS=1 -gPIXEL_BITS=8`). The testbench loads its golden vectors from `expected_outputs/` and prints the RTL-vs-Python verdict. The other 20 scripts run the remaining configurations the same way.
 
 ### 3. System-level wrapper simulation
 
@@ -434,7 +434,7 @@ Every push that touches the golden model or expected outputs triggers the **Gold
 
 | Tool | Role |
 |---|---|
-| Verilog-2001 | RTL (all 10 HDL files; no SystemVerilog constructs) |
+| Verilog-2001 / SystemVerilog | RTL in Verilog-2001; self-checking testbenches in SystemVerilog |
 | Python 3 | Golden reference model + golden-vector generation |
 | ModelSim (Intel FPGA Edition) | RTL + system-level simulation |
 | Xilinx Vivado | Synthesis, implementation, timing/utilization/power reports |
