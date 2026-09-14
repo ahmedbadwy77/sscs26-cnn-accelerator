@@ -4,13 +4,13 @@ on:
   push:
     paths:
       - 'python/**'
-      - 'demo/**'
+      - 'edge-detection-demo/**'
       - 'expected_outputs/**'
       - '.github/workflows/golden-model.yml'
   pull_request:
     paths:
       - 'python/**'
-      - 'demo/**'
+      - 'edge-detection-demo/**'
       - 'expected_outputs/**'
   workflow_dispatch:
 
@@ -65,14 +65,14 @@ jobs:
       - name: Edge-detection demo regression (bonus)
         run: |
           mkdir -p /tmp/committed_demo
-          for f in demo/expected/*.txt; do
+          for f in edge-detection-demo/expected/*.txt; do
             sed 's/\r$//' "$f" > "/tmp/committed_demo/$(basename "$f")"
           done
-          cd demo
+          cd edge-detection-demo
           python edge_detection_demo.py
           cd ..
           fail=0
-          for f in demo/expected/*.txt; do
+          for f in edge-detection-demo/expected/*.txt; do
             b=$(basename "$f")
             sed 's/\r$//' "$f" > /tmp/demo_regen.txt
             if ! diff -q "/tmp/committed_demo/$b" /tmp/demo_regen.txt > /dev/null 2>&1; then

@@ -146,7 +146,7 @@ SOBEL Gx            SOBEL Gy
 [-1  0  +1]         [+1 +2 +1]
 ```
 
-**Bit-exact ModelSim verification.** A dedicated self-checking testbench (`demo/sim/tb_sobel_demo.v`) loads these coefficients and the 32x32 test scene through the real kernel/image memory protocol and compares every valid strobe against the Python golden files: **4/4 configurations (Sobel Gx/Gy x ReLU off/on), 900/900 outputs each, 3,600/3,600 values bit-exact, zero mismatches** - `SOBEL TEST PASSED`.
+**Bit-exact ModelSim verification.** A dedicated self-checking testbench (`edge-detection-demo/sim/tb_sobel_demo.v`) loads these coefficients and the 32x32 test scene through the real kernel/image memory protocol and compares every valid strobe against the Python golden files: **4/4 configurations (Sobel Gx/Gy x ReLU off/on), 900/900 outputs each, 3,600/3,600 values bit-exact, zero mismatches** - `SOBEL TEST PASSED`.
 
 ![Sobel regression transcript](images/sobel_sim_transcript.png)
 
@@ -154,7 +154,7 @@ SOBEL Gx            SOBEL Gy
 
 ![Hardware edge-detection demonstration](images/hardware_edge_demo.png)
 
-Regenerate everything with `python edge_detection_demo.py` and `python visualize_demo.py`; re-run the RTL regression with `cd demo/sim && vsim -c -do run_sobel_gx.do` (see [How to Run](#how-to-run)).
+Regenerate everything with `python edge_detection_demo.py` and `python visualize_demo.py`; re-run the RTL regression with `cd edge-detection-demo/sim && vsim -c -do run_sobel_gx.do` (see [How to Run](#how-to-run)).
 
 ## Throughput and Latency
 
@@ -320,7 +320,7 @@ Post-route placement on xc7z020clg400-1:
 | FPGA reports | ✅ routed utilization / timing / power evidence summarized in `doc/AI_Accelerator_Report.pdf` |
 | Project report | ✅ `doc/AI_Accelerator_Report.pdf` |
 | Competition announcement | ✅ `doc/2026_SSCS_Egypt_Competition_Announcement.pdf` |
-| Edge-detection / inspection demo (optional bonus) | ✅ **Supported** — [demo/edge_detection_demo.py](demo/edge_detection_demo.py) loads the Sobel operators into the runtime-programmable kernel bank and ships the expected outputs for a 32×32 test scene |
+| Edge-detection / inspection demo (optional bonus) | ✅ **Supported** — [edge-detection-demo/edge_detection_demo.py](edge-detection-demo/edge_detection_demo.py) loads the Sobel operators into the runtime-programmable kernel bank and ships the expected outputs for a 32×32 test scene |
 
 ## Project Structure
 
@@ -345,7 +345,7 @@ Post-route placement on xc7z020clg400-1:
 │   ├── cnn_system.v              #   wrapper: local memories + start/busy/done FSM
 │   ├── cnn_system_tb.v           #   system testbench
 │   └── run.do                    #   system simulation script
-├── demo/                         # BONUS edge-detection demonstration
+├── edge-detection-demo/          # BONUS edge-detection demonstration
 │   ├── edge_detection_demo.py    #   Sobel Gx/Gy golden model (writes data/ + expected/)
 │   ├── visualize_demo.py         #   renders the numbers as PNG images
 │   ├── data/
@@ -400,7 +400,7 @@ Compiles the RTL plus `cnn_system.v` / `cnn_system_tb.v` and prints the system t
 ### 4. Edge-detection demo (bonus)
 
 ```bash
-cd demo
+cd edge-detection-demo
 python edge_detection_demo.py
 python visualize_demo.py
 ```
@@ -410,7 +410,7 @@ Loads the Sobel operators through the same fixed-point contract as the accelerat
 ModelSim regression of the same edge-detection flow:
 
 ```bash
-cd demo/sim
+cd edge-detection-demo/sim
 vsim -c -do run_sobel_gx.do   # + run_sobel_gx_relu.do, run_sobel_gy.do, run_sobel_gy_relu.do
 ```
 
