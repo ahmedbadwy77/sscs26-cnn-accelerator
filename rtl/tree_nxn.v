@@ -1,12 +1,11 @@
 module tree_nxn #(parameter N = 3 , parameter PIXEL_BITS = 8)(
-    clk , en , window_flat , kernels_flat , mac_out
+    input wire clk , en,
+    input wire [(N * N * PIXEL_BITS)-1:0] window_flat,
+    input wire [(N * N * PIXEL_BITS)-1:0] kernels_flat,
+    output wire signed [(2 * PIXEL_BITS + $clog2(N * N))-1:0] mac_out
 );
 
 localparam TOTAL_TAPS = N * N , PRODUCT_WIDTH = 2 * PIXEL_BITS + 1 , OUTPUT_WIDTH = 2 * PIXEL_BITS + $clog2(TOTAL_TAPS);
-
-input clk , en;
-input [TOTAL_TAPS*PIXEL_BITS-1:0] window_flat , kernels_flat;
-output signed [OUTPUT_WIDTH-1:0] mac_out;
 
 reg [PIXEL_BITS-1:0] delayed_window_pixels [1:TOTAL_TAPS][1:TOTAL_TAPS];
 reg signed [PRODUCT_WIDTH-1:0] multiplication_result [1:TOTAL_TAPS];

@@ -1,13 +1,10 @@
 module window_nxn #(parameter N = 3 , parameter IMG_WIDTH = 32 , parameter PIXEL_BITS = 8)(
-    clk , en , px , window_flat
+    input wire clk , en,
+    input wire [PIXEL_BITS-1:0] px,
+    output wire [(N * N * PIXEL_BITS)-1:0] window_flat
 );
 
-localparam WINDOW_WIDTH = N * N * PIXEL_BITS;
-localparam LINE_BUFFER_DEPTH = IMG_WIDTH - N;
-
-input clk , en;
-input [PIXEL_BITS-1:0] px;
-output [WINDOW_WIDTH-1:0] window_flat;
+localparam WINDOW_WIDTH = N * N * PIXEL_BITS , LINE_BUFFER_DEPTH = IMG_WIDTH - N;
 
 reg [PIXEL_BITS-1:0] window_pixels [0:N*N-1];
 wire [PIXEL_BITS-1:0] line_buffer_output [1:N-1];

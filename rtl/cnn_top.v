@@ -1,17 +1,14 @@
 module cnn_top #(parameter N = 3 , parameter IMG_WIDTH = 32 , parameter PIXEL_BITS = 8 , parameter RELU_EN = 1 , parameter NUM_KERNELS = 1)(
-    clk , rst , in_pixel , cnn_en , kernel_rd_en , data_valid , out_pixel
+    input wire clk , rst, kernel_rd_en , cnn_en ,
+    input wire [PIXEL_BITS-1:0] in_pixel,
+    output wire data_valid,
+    output wire signed [NUM_KERNELS*(2 * PIXEL_BITS + $clog2(N * N))-1:0] out_pixel
 );
 
 localparam TOTAL_TAPS = N * N;
 localparam OUTPUT_WIDTH = 2 * PIXEL_BITS + $clog2(TOTAL_TAPS);
 localparam KERNEL_BUS_WIDTH = NUM_KERNELS * TOTAL_TAPS * PIXEL_BITS;
 localparam WINDOW_BUS_WIDTH = TOTAL_TAPS * PIXEL_BITS;
-
-input clk , rst , cnn_en , kernel_rd_en;
-input [PIXEL_BITS-1:0] in_pixel;
-
-output data_valid;
-output signed [NUM_KERNELS*OUTPUT_WIDTH-1:0] out_pixel;
 
 wire kernel_load_done , line_enable;
 wire [WINDOW_BUS_WIDTH-1:0] pixel_window;
