@@ -1,0 +1,19 @@
++====================+===================+==============================================================+
+| Launch Setup Clock | Launch Hold Clock | Pin                                                          |
++====================+===================+==============================================================+
+| sys_clk            | sys_clk           | genblk1[0].mac_pipeline_inst/accumulation_stage_reg[3]/B[8]  |
+| sys_clk            | sys_clk           | genblk1[0].mac_pipeline_inst/accumulation_stage_reg[6]/B[17] |
+| sys_clk            | sys_clk           | genblk1[0].mac_pipeline_inst/accumulation_stage_reg[6]/B[16] |
+| sys_clk            | sys_clk           | controller_inst/FSM_sequential_current_state_reg[0]/D        |
+| sys_clk            | sys_clk           | controller_inst/compute_counter_reg[5]/D                     |
+| sys_clk            | sys_clk           | controller_inst/compute_counter_reg[6]/D                     |
+| sys_clk            | sys_clk           | genblk1[0].mac_pipeline_inst/accumulation_stage_reg[3]/B[10] |
+| sys_clk            | sys_clk           | genblk1[0].mac_pipeline_inst/accumulation_stage_reg[2]/B[13] |
+| sys_clk            | sys_clk           | genblk1[0].mac_pipeline_inst/accumulation_stage_reg[2]/B[12] |
+| sys_clk            | sys_clk           | genblk1[0].mac_pipeline_inst/accumulation_stage_reg[2]/B[14] |
+| sys_clk            | sys_clk           | genblk1[0].mac_pipeline_inst/accumulation_stage_reg[2]/B[11] |
+| sys_clk            | sys_clk           | genblk1[0].mac_pipeline_inst/accumulation_stage_reg[2]/B[10] |
+| sys_clk            | sys_clk           | genblk1[0].mac_pipeline_inst/accumulation_stage_reg[6]/B[14] |
+| sys_clk            | sys_clk           | genblk1[0].mac_pipeline_inst/accumulation_stage_reg[6]/B[15] |
+| sys_clk            | sys_clk           | genblk1[0].mac_pipeline_inst/accumulation_stage_reg[3]/B[11] |
++--------------------+-------------------+--------------------------------------------------------------+

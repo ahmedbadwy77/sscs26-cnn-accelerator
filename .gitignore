@@ -38,3 +38,13 @@ xsim.dir/
 *.vds
 *.wdf
 !final_project/**/*.log
+
+# final_project: re-include the curated evidence files (dirs must be un-ignored first)
+!final_project.runs/
+!final_project.sim/
+!final_project/**/*.rpt
+!final_project/**/*.dcp
+!final_project/**/*.log
+!final_project/**/*.saif
+!final_project/**/*.sdf
+!final_project/**/*.wdb
