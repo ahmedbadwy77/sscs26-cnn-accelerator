@@ -325,7 +325,7 @@ Post-route placement on xc7z020clg400-1:
 | Golden model | ✅ `python/golden_model.py` (pure Python 3) |
 | Expected output files | ✅ `expected_outputs/` — 21 files, CI-regenerated |
 | Input test images / feature maps | ✅ generated on-the-fly by the testbench (LFSR, ramp, worst-case corner stimuli) rather than shipped as image files |
-| FPGA reports | ✅ raw run reports, checkpoints, and the post-route timing simulation (`final_project/`) + summary in `doc/AI_Accelerator_Report.pdf` |
+| FPGA reports | ✅ raw run reports, checkpoints, and the post-route timing simulation (`vivado_implementation/`) + summary in `doc/AI_Accelerator_Report.pdf` |
 | Project report | ✅ `doc/AI_Accelerator_Report.pdf` |
 | Competition announcement | ✅ `doc/2026_SSCS_Egypt_Competition_Announcement.pdf` |
 | Edge-detection / inspection demo (optional bonus) | ✅ **Supported** — [edge-detection-demo/edge_detection_demo.py](edge-detection-demo/edge_detection_demo.py) loads the Sobel operators into the runtime-programmable kernel bank and ships the expected outputs for a 32×32 test scene |
@@ -370,7 +370,7 @@ Post-route placement on xc7z020clg400-1:
 │   └── 2026_SSCS_Egypt_Competition_Announcement.pdf  # competition specification
 ├── images/                       # 25 evidence figures
 ├── _regress.log                  # 7/7 PASS RTL regression summary log
-├── final_project/                # complete Vivado project: impl reports, checkpoints,
+├── vivado_implementation/                # complete Vivado project: impl reports, checkpoints,
 │                                #   post-route timing simulation + SAIF activity
 ├── README.md
 └── .gitignore
@@ -441,7 +441,7 @@ Every push that touches the golden model or expected outputs triggers the **Gold
 - **Tool-version sensitivity:** synthesis optimizations evolve between releases (logic restructuring, retiming, and DSP inference rules change the LUT/DSP/FF partition for identical RTL); placement algorithms differ, affecting routing congestion and therefore timing slack and power estimates; and resource inference can differ (e.g. one version infers an SRL16E where another maps the same shift register to flip-flops, changing LUT and FF counts with no RTL change). Benchmark comparisons should therefore use the same tool version and constraints, and results from different versions are reported separately.
 - **Source-controlled inputs:** all RTL, testbenches, sim/system scripts, the XDC, the Python golden model, all 21 golden expected-output files, the report PDF, the competition announcement, and the evidence images.
 - **Generated artifacts** (ModelSim `work/` libraries, `*.wlf`, transcripts, Vivado journals/logs/backups) are intentionally **not** committed — they are rebuilt by the commands above and covered by `.gitignore`.
-- **Vivado project included:** `final_project/` ships the complete Vivado implementation project — the `impl_10` run reports (timing, utilization, power, DRC), design checkpoints, and the post-route timing simulation (XSim) with its SAIF switching-activity file — so every reported result can be inspected directly. (The original exploratory `.xpr` projects were stale — they referenced a `../rtl_2/` directory that no longer exists — and remain excluded.)
+- **Vivado project included:** `vivado_implementation/` ships the complete Vivado implementation project — the `impl_10` run reports (timing, utilization, power, DRC), design checkpoints, and the post-route timing simulation (XSim) with its SAIF switching-activity file — so every reported result can be inspected directly. (The original exploratory `.xpr` projects were stale — they referenced a `../rtl_2/` directory that no longer exists — and remain excluded.)
 - **What is reproducible from this repo:** golden-vector generation, all 21 RTL regressions, the system-wrapper test, and the Sobel edge-detection demo. **What is not:** board-level I/O timing (the XDC false-paths I/O by design) — though the complete implementation project (reports, checkpoints, timing simulation + SAIF) is provided in \inal_project/\.
 
 ## Tools & Technologies

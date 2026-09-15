@@ -26,7 +26,7 @@ transcript
 # ModelSim vendor boilerplate (auto-regenerated locally)
 modelsim.ini
 
-# ===== Vivado project build junk (final_project keeps only curated results) =====
+# ===== Vivado project build junk (vivado_implementation keeps only curated results) =====
 *.cache/
 *.hw/
 *.ip_user_files/
@@ -39,7 +39,7 @@ xsim.dir/
 *.wdf
 !final_project/**/*.log
 
-# final_project: re-include the curated evidence files (dirs must be un-ignored first)
+# vivado_implementation: re-include the curated evidence files (dirs must be un-ignored first)
 !final_project.runs/
 !final_project.sim/
 !final_project/**/*.rpt
