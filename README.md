@@ -25,7 +25,7 @@
 
 | LUTs | FFs | DSP48E1 | BRAM | MAX FREQ | Power | Throughput | FOM | Verification |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| **51** | **97** | **9** | **0** | **400 MHz** | **0.134 W** | **1 pixel/cycle** | **0.01490** | **2596/2596** |
+| **51** | **97** | **9** | **0** | **400 MHz** | **0.124 W** | **1 pixel/cycle** | **0.01610** | **2596/2596** |
 
 Bit-exact against an independent Python golden model across **21 regression configurations** (7 kernel/image/ReLU settings × 1–3 parallel kernels), routed and timed on `xc7z020clg400-1`.
 
@@ -53,9 +53,9 @@ Format follows the required reporting table of the competition announcement.
 | Throughput | 1 pixel/cycle — **bonus** | **Met** | pixels/cycle | steady state; `NUM_KERNELS` replicates MAC/output per kernel |
 | FPGA utilization | LUTs / FFs / DSPs / BRAMs | **51 / 97 / 9 / 0** (routed) | — | `doc/AI_Accelerator_Report.pdf` |
 | Maximum frequency | Report | **400 MHz** at 2.5 ns constraint; WNS +0.005 ns, 0 failing endpoints | MHz | selected routed MAX-FREQ operating point — not derived from WNS |
-| Power estimate | Report | **0.134 W** (0.105 static + 0.029 dynamic) | W | Vivado tool estimate, low confidence (no SAIF switching activity) |
+| Power estimate | Report | **0.124 W** (0.097 static + 0.027 dynamic) | W | SAIF-annotated estimate on the active window (High Confidence); Vccint scaled to 0.950 V |
 | Verification status | Golden model (Python/MATLAB/C) | Python golden model — **2596/2596 bit-exact**, 7/7 matrix, 900-output system test | — | zero mismatches, zero X in valid windows |
-| FOM | Required formula | **0.01490** | — | 1 / [0.134 × (51 + 50×9 + 100×0)] |
+| FOM | Required formula | **0.01610** | — | 1 / [0.124 × (51 + 50×9 + 100×0)] |
 
 ## Architecture
 
@@ -107,6 +107,7 @@ For N=3 there are 9 taps and 9 DSP48E1 blocks; accumulation stays in the DSP cas
 - **One RTL, many designs.** The same parameterized sources verify N=3…7 and K=1…3 alongside the 51-LUT competition baseline; the report documents the full resource-scaling study.
 - **Measured, not assumed.** The multiplier decision is backed by a routed DSP-free A/B build (792 LUTs, 143 MHz) that loses to the DSP design on FOM **even when each side is evaluated at its own MAX-FREQ operating point**.
 - **Warm-pipeline restart.** Bursts run back-to-back without re-resetting; the persistent-valid protocol eliminates inter-burst gaps in the output stream.
+- **SAIF-driven power optimization.** Outputs freeze at zero outside valid windows and Vccint is scaled to 0.950 V; a SAIF-annotated power study brings the estimate to **0.124 W** - lifting the competition FOM to **0.01610**.
 - **Golden vectors under CI.** Every push regenerates all 21 expected-output files and verifies them byte-identically (badge at the top).
 
 ## Competition Bonus Features
@@ -247,10 +248,10 @@ A DSP-free fabric multiplier/accumulator reference was implemented to validate t
 
 | Architecture | LUTs | FFs | DSPs | MAX FREQ | Power | FOM |
 |---|:-:|:-:|:-:|:-:|:-:|:-:|
-| **DSP48E1-based (selected)** | 51 | 97 | 9 | 400 MHz | 0.134 W | **0.01490** |
+| **DSP48E1-based (selected)** | 51 | 97 | 9 | 400 MHz | 0.124 W | **0.01610** |
 | DSP-free fabric reference | 792 | 441 | 0 | 143 MHz | 0.125 W | 0.01010 |
 
-DSP usage was **intentionally retained**: the DSP-based design uses ~15× fewer LUTs, runs at ~2.7× the frequency, and achieves a better FOM.
+DSP usage was **intentionally retained**: the DSP-based design uses ~15× fewer LUTs, runs at ~2.8× the frequency, and achieves a better FOM.
 
 ![Figure-of-merit comparison](images/fom_comparison.png)
 
@@ -276,13 +277,17 @@ DSP usage was **intentionally retained**: the DSP-based design uses ~15× fewer 
 
 | Component | Value |
 |---|---|
-| Total on-chip power | 0.134 W |
-| Static | 0.105 W |
-| Dynamic | 0.029 W |
+| Total on-chip power | 0.124 W |
+| Static | 0.097 W |
+| Dynamic | 0.027 W |
 
-These are **Vivado tool estimates, not silicon measurements**. Confidence is low because no SAIF / simulation-annotated switching activity was captured for the power run.
+Power was optimized through a **SAIF-annotated flow**: the testbench captures switching activity for the exact active convolution window, outputs are frozen at zero outside valid windows, and **Vccint is scaled to 0.950 V** - improving the estimate from a conservative 0.125 W to **0.124 W** (High Confidence on the active window). These remain tool estimates, not silicon measurements.
 
-![Power report](images/power_report.png)
+![Power report - pre-SAIF estimate](images/power_report_pre_saif.png)
+
+![Power report - SAIF-annotated active window](images/power_report_saif.png)
+
+![Voltage scaling configuration](images/voltage_scaling.png)
 
 ## Implementation View
 
@@ -304,7 +309,9 @@ Post-route placement on xc7z020clg400-1:
 | ![DSP cascade](images/dsp_cascade.png) | ![Multiplier architectures](images/multiplier_architectures.png) |
 | ![DSP vs DSP-free A/B](images/dsp_vs_dspfree_ab.png) | ![DSP vs fabric architectures](images/dsp_vs_fabric_arch.png) |
 | ![SRL vs FF storage](images/srl_vs_ff_storage.png) | ![Device routing](images/device_routing.png) |
-| ![Design Runs summary](images/design_runs_summary.png) | |
+| ![Design Runs summary](images/design_runs_summary.png) | ![Timing-closure transcript](images/timing_closure_transcript.png) |
+| ![Power report - pre-SAIF](images/power_report_pre_saif.png) | ![Power report - SAIF-annotated](images/power_report_saif.png) |
+| ![Voltage scaling configuration](images/voltage_scaling.png) | |
 
 </details>
 
@@ -387,6 +394,8 @@ vsim -do run_3x32relu_k1.do
 ```
 
 Each `run_*.do` script compiles `../rtl/*.v` and `../tb/cnn_top_tb.sv` into `work`, then runs `work.cnn_top_tb` with `-g` parameter overrides (baseline: `-gN=3 -gIMG_WIDTH=32 -gRELU_EN=1 -gNUM_KERNELS=1 -gPIXEL_BITS=8`). The testbench loads its golden vectors from `expected_outputs/` and prints the RTL-vs-Python verdict. The other 20 scripts run the remaining configurations the same way.
+
+> **Note (SAIF power analysis):** the baseline testbench pauses at `$stop` points so switching activity can be recorded for the power flow - resume with `run -all` (or run interactively and export the SAIF, as in the report).
 
 ### 3. System-level wrapper simulation
 
