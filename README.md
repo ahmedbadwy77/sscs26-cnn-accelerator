@@ -434,6 +434,8 @@ Every push that touches the golden model or expected outputs triggers the **Gold
 - **FPGA part:** xc7z020clg400-1, fixed for all implementation runs (see the report PDF).
 - **Baseline parameters:** N=3, IMG_WIDTH=32, PIXEL_BITS=8, RELU_EN=1, NUM_KERNELS=1.
 - **Tool versions:** All implementation results reported here and in the report PDF were produced with the **Vivado 2026** toolchain for the submission build. Simulation used **ModelSim – Intel FPGA Edition 2020.1**.
+- **Source availability:** the complete RTL source code, Python verification models, and constraints are open-source and publicly available at [github.com/ahmedbadwy77/sscs26-cnn-accelerator](https://github.com/ahmedbadwy77/sscs26-cnn-accelerator).
+- **Tool-version sensitivity:** synthesis optimizations evolve between releases (logic restructuring, retiming, and DSP inference rules change the LUT/DSP/FF partition for identical RTL); placement algorithms differ, affecting routing congestion and therefore timing slack and power estimates; and resource inference can differ (e.g. one version infers an SRL16E where another maps the same shift register to flip-flops, changing LUT and FF counts with no RTL change). Benchmark comparisons should therefore use the same tool version and constraints, and results from different versions are reported separately.
 - **Source-controlled inputs:** all RTL, testbenches, sim/system scripts, the XDC, the Python golden model, all 21 golden expected-output files, the report PDF, the competition announcement, and the evidence images.
 - **Generated artifacts** (ModelSim `work/` libraries, `*.wlf`, transcripts, Vivado journals/logs/backups) are intentionally **not** committed — they are rebuilt by the commands above and covered by `.gitignore`.
 - **No Vivado `.xpr` projects are included.** The original `.xpr` files were stale — they referenced sources at a `../rtl_2/` directory that no longer exists — and were deliberately excluded. The headless flows above (`sim/*.do`, `system/run.do`) fully replace them.
@@ -467,3 +469,12 @@ Distributed under the [MIT License](LICENSE).
 
 - [`doc/AI_Accelerator_Report.pdf`](doc/AI_Accelerator_Report.pdf) — full design, verification, DSE, and results write-up.
 - [`doc/2026_SSCS_Egypt_Competition_Announcement.pdf`](doc/2026_SSCS_Egypt_Competition_Announcement.pdf) — official competition specification.
+
+## Conclusion
+
+This repository presents a streaming N×N CNN convolution accelerator for the Xilinx Zynq-7020, with a competition baseline of N=3, W=32, `NUM_KERNELS`=1, and ReLU enabled. The current routed baseline uses **51 LUTs, 97 FFs, 9 DSP48E1 slices, and 0 BRAMs**, with an estimated total power of **0.124 W**. The implementation meets the 2.5 ns timing constraint with **WNS +0.005 ns** and reports a **400 MHz** (MAX FREQ) clock-summary frequency; at one output pixel per cycle, the competition **FOM is 0.01610**.
+
+The datapath keeps the core architectural decisions that motivated the original design: a streaming line-buffer window generator, a tap-delay alignment structure, and a DSP48E1-based multiply-accumulate cascade. The RTL is parameterized for multiple parallel kernels - the window generator and controller are shared, while the MAC/output stages replicate per kernel - providing a clean path from the single-kernel competition baseline to higher-throughput parallel configurations while keeping the baseline architecture unchanged.
+
+Verification remains layered: the Python golden model checks numerical correctness, the RTL-side checks validate structural behavior and streaming alignment, and protocol/strobe checks protect the burst contract. The 3×32, K=1, ReLU-enabled baseline passes **2596 Python-golden comparisons with zero mismatches**, and the bonus system-level wrapper separately demonstrates loading, execution control, and frame-level collection of the expected 900 spatial outputs.
+
