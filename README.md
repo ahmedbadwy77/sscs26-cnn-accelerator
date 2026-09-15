@@ -309,7 +309,8 @@ Post-route placement on xc7z020clg400-1:
 | ![DSP cascade](images/dsp_cascade.png) | ![Multiplier architectures](images/multiplier_architectures.png) |
 | ![DSP vs DSP-free A/B](images/dsp_vs_dspfree_ab.png) | ![DSP vs fabric architectures](images/dsp_vs_fabric_arch.png) |
 | ![SRL vs FF storage](images/srl_vs_ff_storage.png) | ![Device routing](images/device_routing.png) |
-| ![Design Runs summary](images/design_runs_summary.png) | ![Timing-closure transcript](images/timing_closure_transcript.png) |
+| ![RTL schematic - window_nxn](images/rtl_schematic_window_nxn.png) | ![Design Runs summary](images/design_runs_summary.png) |
+| ![Timing-closure transcript](images/timing_closure_transcript.png) | |
 | ![Power report - pre-SAIF](images/power_report_pre_saif.png) | ![Power report - SAIF-annotated](images/power_report_saif.png) |
 | ![Voltage scaling configuration](images/voltage_scaling.png) | |
 
@@ -324,7 +325,7 @@ Post-route placement on xc7z020clg400-1:
 | Golden model | ✅ `python/golden_model.py` (pure Python 3) |
 | Expected output files | ✅ `expected_outputs/` — 21 files, CI-regenerated |
 | Input test images / feature maps | ✅ generated on-the-fly by the testbench (LFSR, ramp, worst-case corner stimuli) rather than shipped as image files |
-| FPGA reports | ✅ routed utilization / timing / power evidence summarized in `doc/AI_Accelerator_Report.pdf` |
+| FPGA reports | ✅ raw run reports, checkpoints, and the post-route timing simulation (`final_project/`) + summary in `doc/AI_Accelerator_Report.pdf` |
 | Project report | ✅ `doc/AI_Accelerator_Report.pdf` |
 | Competition announcement | ✅ `doc/2026_SSCS_Egypt_Competition_Announcement.pdf` |
 | Edge-detection / inspection demo (optional bonus) | ✅ **Supported** — [edge-detection-demo/edge_detection_demo.py](edge-detection-demo/edge_detection_demo.py) loads the Sobel operators into the runtime-programmable kernel bank and ships the expected outputs for a 32×32 test scene |
@@ -369,6 +370,8 @@ Post-route placement on xc7z020clg400-1:
 │   └── 2026_SSCS_Egypt_Competition_Announcement.pdf  # competition specification
 ├── images/                       # 25 evidence figures
 ├── _regress.log                  # 7/7 PASS RTL regression summary log
+├── final_project/                # complete Vivado project: impl reports, checkpoints,
+│                                #   post-route timing simulation + SAIF activity
 ├── README.md
 └── .gitignore
 ```
@@ -439,7 +442,7 @@ Every push that touches the golden model or expected outputs triggers the **Gold
 - **Source-controlled inputs:** all RTL, testbenches, sim/system scripts, the XDC, the Python golden model, all 21 golden expected-output files, the report PDF, the competition announcement, and the evidence images.
 - **Generated artifacts** (ModelSim `work/` libraries, `*.wlf`, transcripts, Vivado journals/logs/backups) are intentionally **not** committed — they are rebuilt by the commands above and covered by `.gitignore`.
 - **No Vivado `.xpr` projects are included.** The original `.xpr` files were stale — they referenced sources at a `../rtl_2/` directory that no longer exists — and were deliberately excluded. The headless flows above (`sim/*.do`, `system/run.do`) fully replace them.
-- **What is reproducible from this repo:** golden-vector generation, all 21 RTL regressions, the system-wrapper test, and the Sobel edge-detection demo. **What is not:** the Vivado synthesis/implementation flow (removed from the repo — implementation evidence lives in the report PDF), a one-click Vivado GUI project, and board-level I/O timing (the XDC false-paths I/O by design).
+- **What is reproducible from this repo:** golden-vector generation, all 21 RTL regressions, the system-wrapper test, and the Sobel edge-detection demo. **What is not:** board-level I/O timing (the XDC false-paths I/O by design) — though the complete implementation project (reports, checkpoints, timing simulation + SAIF) is provided in \inal_project/\.
 
 ## Tools & Technologies
 

@@ -25,3 +25,16 @@ transcript
 
 # ModelSim vendor boilerplate (auto-regenerated locally)
 modelsim.ini
+
+# ===== Vivado project build junk (final_project keeps only curated results) =====
+*.cache/
+*.hw/
+*.ip_user_files/
+xsim.dir/
+*.pb
+*.rpx
+*.rst
+*.vdi
+*.vds
+*.wdf
+!final_project/**/*.log
