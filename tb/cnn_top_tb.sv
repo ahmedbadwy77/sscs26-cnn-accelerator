@@ -302,7 +302,7 @@ initial begin
     $stop;
 
     lfsr_value = 8'hB7;
-    for (array_index = 0; array_index < TOTAL_TAPS - 1; array_index = array_index + 1)
+    for (array_index = 0; array_index < TOTAL_TAPS ; array_index = array_index + 1)
         step_lfsr;
 
     run_cnn_burst(BURST_LENGTH_B, 1);

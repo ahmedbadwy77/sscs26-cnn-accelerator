@@ -106,7 +106,7 @@ def generate_multi_kernels(kernel_size, num_kernels):
 def generate_ramp_pixels(length):
     return [
         (index % 251) + 1
-        for index in range(1, length + 1)
+        for index in range(0, length)
     ]
 
 
@@ -141,7 +141,7 @@ def burst_stream_outputs(
     outputs = []
 
     for output_index in range(output_count):
-        anchor_index = fill + output_index - 1
+        anchor_index = fill + output_index
 
         anchor_row = anchor_index // width
         anchor_col = anchor_index % width
@@ -412,7 +412,7 @@ def run_self_tests():
     fill = fill_cycles(3, 32)
 
     expected_delta = [
-        delta_image[fill + index - 1]
+        delta_image[fill + index]
         for index in range(len(delta_outputs))
     ]
 
