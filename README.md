@@ -453,6 +453,14 @@ Every push that touches the golden model or expected outputs triggers the **Gold
 | Tcl | Vivado batch sweep flow |
 | GitHub Actions | Golden-model bit-exact regression CI |
 
+## Conclusion
+
+This repository presents a streaming N×N CNN convolution accelerator for the Xilinx Zynq-7020, with a competition baseline of N=3, W=32, `NUM_KERNELS`=1, and ReLU enabled. The current routed baseline uses **51 LUTs, 97 FFs, 9 DSP48E1 slices, and 0 BRAMs**, with an estimated total power of **0.124 W**. The implementation meets the 2.5 ns timing constraint with **WNS +0.005 ns** and reports a **400 MHz** (MAX FREQ) clock-summary frequency; at one output pixel per cycle, the competition **FOM is 0.01610**.
+
+The datapath keeps the core architectural decisions that motivated the original design: a streaming line-buffer window generator, a tap-delay alignment structure, and a DSP48E1-based multiply-accumulate cascade. The RTL is parameterized for multiple parallel kernels - the window generator and controller are shared, while the MAC/output stages replicate per kernel - providing a clean path from the single-kernel competition baseline to higher-throughput parallel configurations while keeping the baseline architecture unchanged.
+
+Verification remains layered: the Python golden model checks numerical correctness, the RTL-side checks validate structural behavior and streaming alignment, and protocol/strobe checks protect the burst contract. The 3×32, K=1, ReLU-enabled baseline passes **2596 Python-golden comparisons with zero mismatches**, and the bonus system-level wrapper separately demonstrates loading, execution control, and frame-level collection of the expected 900 spatial outputs.
+
 ## Team — FlipFlopers, Cairo University
 
 | Name | GitHub | Email |
@@ -469,12 +477,3 @@ Distributed under the [MIT License](LICENSE).
 
 - [`doc/AI_Accelerator_Report.pdf`](doc/AI_Accelerator_Report.pdf) — full design, verification, DSE, and results write-up.
 - [`doc/2026_SSCS_Egypt_Competition_Announcement.pdf`](doc/2026_SSCS_Egypt_Competition_Announcement.pdf) — official competition specification.
-
-## Conclusion
-
-This repository presents a streaming N×N CNN convolution accelerator for the Xilinx Zynq-7020, with a competition baseline of N=3, W=32, `NUM_KERNELS`=1, and ReLU enabled. The current routed baseline uses **51 LUTs, 97 FFs, 9 DSP48E1 slices, and 0 BRAMs**, with an estimated total power of **0.124 W**. The implementation meets the 2.5 ns timing constraint with **WNS +0.005 ns** and reports a **400 MHz** (MAX FREQ) clock-summary frequency; at one output pixel per cycle, the competition **FOM is 0.01610**.
-
-The datapath keeps the core architectural decisions that motivated the original design: a streaming line-buffer window generator, a tap-delay alignment structure, and a DSP48E1-based multiply-accumulate cascade. The RTL is parameterized for multiple parallel kernels - the window generator and controller are shared, while the MAC/output stages replicate per kernel - providing a clean path from the single-kernel competition baseline to higher-throughput parallel configurations while keeping the baseline architecture unchanged.
-
-Verification remains layered: the Python golden model checks numerical correctness, the RTL-side checks validate structural behavior and streaming alignment, and protocol/strobe checks protect the burst contract. The 3×32, K=1, ReLU-enabled baseline passes **2596 Python-golden comparisons with zero mismatches**, and the bonus system-level wrapper separately demonstrates loading, execution control, and frame-level collection of the expected 900 spatial outputs.
-
