@@ -251,7 +251,7 @@ A DSP-free fabric multiplier/accumulator reference was implemented to validate t
 | **DSP48E1-based (selected)** | 51 | 97 | 9 | 400 MHz | 0.124 W | **0.01610** |
 | DSP-free fabric reference | 792 | 441 | 0 | 143 MHz | 0.125 W | 0.01010 |
 
-DSP usage was **intentionally retained**: the DSP-based design uses ~15× fewer LUTs, runs at ~2.8× the frequency, and achieves a better FOM.
+DSP usage was **intentionally retained**: the DSP-based design uses ~15× fewer LUTs, runs at ~2.8× the frequency, and achieves a **+59.4% higher FOM** (0.01610 vs 0.01010).
 
 ![Figure-of-merit comparison](images/fom_comparison.png)
 
