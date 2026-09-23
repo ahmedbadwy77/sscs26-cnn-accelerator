@@ -16,9 +16,9 @@ localparam OUTPUTS_A = (BURST_LENGTH_A > FILL_CYCLES + PIPELINE_LATENCY) ? BURST
 localparam STROBE_TOTAL = OUTPUTS_A + OUTPUTS_B + OUTPUTS_C + OUTPUTS_D;
 localparam TOTAL_EXPECTED_OUTPUTS = NUM_KERNELS * STROBE_TOTAL;
 
-parameter real CLK_PERIOD = 5.0;   
-localparam real T_DRV      = 0.050;
-localparam real T_SMP      = 0.200;
+parameter real CLK_PERIOD = 20.0;
+localparam real T_DRV      = 10.000;
+localparam real T_SMP      = 15.000;
 
 reg clk, rst, cnn_en, kernel_rd_en, law_check_active, in_burst;
 reg [PIXEL_BITS-1:0] in_pixel, lfsr_value, image_value;
@@ -147,7 +147,7 @@ task run_cnn_burst(input integer burst_length, input integer input_mode);
             end
         end
 
-        // Hold cnn_en 1 cycle extra with dummy pixel so pixel #burst_length shifts into tap registers
+        // Hold cnn_en 1 cycle
         @(posedge clk);
         #T_DRV;
         in_pixel = 8'd0;
@@ -202,8 +202,8 @@ always @(posedge clk) begin
                     burst_checked = burst_checked + 1;
 
                     // Identity Law Check
-                    if (NUM_KERNELS >= 1 && kernel_number == 0 && law_check_active && !RELU_EN && 
-                        kernel_bytes[TOTAL_TAPS-1] == {{(PIXEL_BITS-1){1'b0}}, 1'b1} && 
+                    if (NUM_KERNELS >= 1 && kernel_number == 0 && law_check_active && !RELU_EN &&
+                        kernel_bytes[TOTAL_TAPS-1] == {{(PIXEL_BITS-1){1'b0}}, 1'b1} &&
                         kernel_bytes[0] == {PIXEL_BITS{1'b0}}) begin
 
                         law_pixel_count = law_pixel_count + 1;
@@ -287,7 +287,7 @@ initial begin
     @(posedge clk);
     #T_DRV;
     rst = 1'b1;
-    
+
     repeat (10) @(posedge clk);
 
     prepare_kernels;
