@@ -37,14 +37,22 @@ xsim.dir/
 *.vdi
 *.vds
 *.wdf
-!final_project/**/*.log
+!project_9/**/*.log
 
 # vivado_implementation: re-include the curated evidence files (dirs must be un-ignored first)
-!final_project.runs/
-!final_project.sim/
-!final_project/**/*.rpt
-!final_project/**/*.dcp
-!final_project/**/*.log
-!final_project/**/*.saif
-!final_project/**/*.sdf
-!final_project/**/*.wdb
+!project_9.runs/
+!project_9.sim/
+!project_9/**/*.rpt
+!project_9/**/*.dcp
+!project_9/**/*.log
+!project_9/**/*.saif
+!project_9/**/*.sdf
+!project_9/**/*.wdb
+
+# ===== Local experiment scratch (never part of the submission) =====
+LAST_VERISON.zip
+*.zip
+message.txt
+expected_output.txt
+tight_setup_hold_pins.txt
+_tmp_guard_test.do
