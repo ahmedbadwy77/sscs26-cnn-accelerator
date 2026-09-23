@@ -1,0 +1,18 @@
+# compile verilog/system verilog design source files
+verilog xil_defaultlib  \
+"../../../../../rtl/cnn_controller.v" \
+"../../../../../rtl/cnn_top.v" \
+"../../../../../rtl/kernel_coeff_memory.v" \
+"../../../../../rtl/line_buffer.v" \
+"../../../../../rtl/output_stage.v" \
+"../../../../../rtl/tree_nxn.v" \
+"../../../../../rtl/window_nxn.v" \
+
+sv xil_defaultlib  \
+"../../../../../tb/cnn_top_tb.sv" \
+
+# compile glbl module
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort

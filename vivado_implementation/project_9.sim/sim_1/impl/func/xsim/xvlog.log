@@ -1,0 +1,11 @@
+INFO: [VRFC 10-2263] Analyzing Verilog file "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/project_9/project_9.sim/sim_1/impl/func/xsim/cnn_top_tb_func_impl.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cnn_controller
+INFO: [VRFC 10-311] analyzing module cnn_top
+INFO: [VRFC 10-311] analyzing module kernel_coeff_memory
+INFO: [VRFC 10-311] analyzing module line_buffer
+INFO: [VRFC 10-311] analyzing module line_buffer_0
+INFO: [VRFC 10-311] analyzing module tree_nxn
+INFO: [VRFC 10-311] analyzing module window_nxn
+INFO: [VRFC 10-311] analyzing module glbl
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/tb/cnn_top_tb.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cnn_top_tb

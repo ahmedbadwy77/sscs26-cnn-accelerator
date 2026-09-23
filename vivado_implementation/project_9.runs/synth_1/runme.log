@@ -1,0 +1,550 @@
+
+*** Running vivado
+    with args -log cnn_top.vds -m64 -product Vivado -mode batch -messageDb vivado.pb -notrace -source cnn_top.tcl
+
+
+****** Vivado v2019.1 (64-bit)
+  **** SW Build 2552052 on Fri May 24 14:47:09 MDT 2019
+  **** IP Build 2548770 on Fri May 24 18:01:18 MDT 2019
+    ** Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
+
+source cnn_top.tcl -notrace
+Command: synth_design -top cnn_top -part xc7z020clg400-1
+Starting synth_design
+Attempting to get a license for feature 'Synthesis' and/or device 'xc7z020'
+INFO: [Common 17-349] Got license for feature 'Synthesis' and/or device 'xc7z020'
+INFO: [Device 21-403] Loading part xc7z020clg400-1
+INFO: Launching helper process for spawning children vivado processes
+INFO: Helper process launched with PID 105165 
+---------------------------------------------------------------------------------
+Starting RTL Elaboration : Time (s): cpu = 00:00:01 ; elapsed = 00:00:03 . Memory (MB): peak = 1793.730 ; gain = 153.707 ; free physical = 3074 ; free virtual = 14905
+---------------------------------------------------------------------------------
+INFO: [Synth 8-6157] synthesizing module 'cnn_top' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/cnn_top.v:1]
+	Parameter N bound to: 3 - type: integer 
+	Parameter IMG_WIDTH bound to: 32 - type: integer 
+	Parameter PIXEL_BITS bound to: 8 - type: integer 
+	Parameter RELU_EN bound to: 1 - type: integer 
+	Parameter NUM_KERNELS bound to: 1 - type: integer 
+	Parameter TOTAL_TAPS bound to: 9 - type: integer 
+	Parameter OUTPUT_WIDTH bound to: 20 - type: integer 
+	Parameter KERNEL_BUS_WIDTH bound to: 72 - type: integer 
+	Parameter WINDOW_BUS_WIDTH bound to: 72 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'tree_nxn' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:1]
+	Parameter N bound to: 3 - type: integer 
+	Parameter PIXEL_BITS bound to: 8 - type: integer 
+	Parameter TOTAL_TAPS bound to: 9 - type: integer 
+	Parameter PRODUCT_WIDTH bound to: 17 - type: integer 
+	Parameter OUTPUT_WIDTH bound to: 20 - type: integer 
+INFO: [Synth 8-5534] Detected attribute (* use_dsp = "yes" *) [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:14]
+WARNING: [Synth 8-5856] 3D RAM delayed_window_pixels_reg  for this pattern/configuration is not supported. This will most likely be implemented in registers
+INFO: [Synth 8-6155] done synthesizing module 'tree_nxn' (1#1) [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:1]
+INFO: [Synth 8-6157] synthesizing module 'output_stage' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/output_stage.v:1]
+	Parameter DATA_WIDTH bound to: 20 - type: integer 
+	Parameter RELU_EN bound to: 1 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'output_stage' (2#1) [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/output_stage.v:1]
+INFO: [Synth 8-6157] synthesizing module 'cnn_controller' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/cnn_controller.v:1]
+	Parameter N bound to: 3 - type: integer 
+	Parameter IMG_WIDTH bound to: 32 - type: integer 
+	Parameter FILL_CYCLES bound to: 66 - type: integer 
+	Parameter COUNTER_WIDTH bound to: 7 - type: integer 
+	Parameter IDLE bound to: 2'b00 
+	Parameter COMPUTING bound to: 2'b01 
+	Parameter KREAD bound to: 2'b10 
+	Parameter VALID bound to: 2'b11 
+	Parameter TOTAL_TAPS bound to: 9 - type: integer 
+	Parameter FLUSH_CYCLES bound to: 11 - type: integer 
+	Parameter FLUSH_COUNTER_WIDTH bound to: 4 - type: integer 
+INFO: [Synth 8-226] default block is never used [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/cnn_controller.v:23]
+INFO: [Synth 8-6155] done synthesizing module 'cnn_controller' (3#1) [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/cnn_controller.v:1]
+INFO: [Synth 8-6157] synthesizing module 'kernel_coeff_memory' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/kernel_coeff_memory.v:1]
+	Parameter N bound to: 3 - type: integer 
+	Parameter PIXEL_BITS bound to: 8 - type: integer 
+	Parameter NUM_KERNELS bound to: 1 - type: integer 
+	Parameter TOTAL_KERNEL_VALUES bound to: 9 - type: integer 
+	Parameter TOTAL_VALUES bound to: 9 - type: integer 
+	Parameter COUNTER_WIDTH bound to: 4 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'kernel_coeff_memory' (4#1) [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/kernel_coeff_memory.v:1]
+INFO: [Synth 8-6157] synthesizing module 'window_nxn' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/window_nxn.v:1]
+	Parameter N bound to: 3 - type: integer 
+	Parameter IMG_WIDTH bound to: 32 - type: integer 
+	Parameter PIXEL_BITS bound to: 8 - type: integer 
+	Parameter WINDOW_WIDTH bound to: 72 - type: integer 
+	Parameter LINE_BUFFER_DEPTH bound to: 29 - type: integer 
+INFO: [Synth 8-6157] synthesizing module 'line_buffer' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/line_buffer.v:1]
+	Parameter DEPTH bound to: 29 - type: integer 
+	Parameter PIXEL_BITS bound to: 8 - type: integer 
+INFO: [Synth 8-6155] done synthesizing module 'line_buffer' (5#1) [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/line_buffer.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'window_nxn' (6#1) [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/window_nxn.v:1]
+INFO: [Synth 8-6155] done synthesizing module 'cnn_top' (7#1) [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/cnn_top.v:1]
+---------------------------------------------------------------------------------
+Finished RTL Elaboration : Time (s): cpu = 00:00:02 ; elapsed = 00:00:04 . Memory (MB): peak = 1847.484 ; gain = 207.461 ; free physical = 3099 ; free virtual = 14931
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:02 ; elapsed = 00:00:04 . Memory (MB): peak = 1853.418 ; gain = 213.395 ; free physical = 3097 ; free virtual = 14928
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 1 : Time (s): cpu = 00:00:02 ; elapsed = 00:00:04 . Memory (MB): peak = 1853.418 ; gain = 213.395 ; free physical = 3097 ; free virtual = 14928
+---------------------------------------------------------------------------------
+INFO: [Project 1-570] Preparing netlist for logic optimization
+
+Processing XDC Constraints
+Initializing timing engine
+Parsing XDC File [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/project_9/project_9.srcs/constrs_2/new/synth_constraints.xdc]
+Finished Parsing XDC File [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/project_9/project_9.srcs/constrs_2/new/synth_constraints.xdc]
+Parsing XDC File [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/project_9/project_9.srcs/constrs_2/new/waiver_messages.xdc]
+Finished Parsing XDC File [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/project_9/project_9.srcs/constrs_2/new/waiver_messages.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/project_9/project_9.srcs/constrs_2/new/waiver_messages.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/cnn_top_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/cnn_top_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Parsing XDC File [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/constraints/pblock.xdc]
+WARNING: [Vivado 12-4775] These ranges will be aligned to a tile boundary: DSP48_X0Y9:DSP48_X4Y25 [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/constraints/pblock.xdc:2]
+WARNING: [Vivado 12-180] No cells matched 'get_cells -hier -filter {REF_NAME =~ "LUT*" || REF_NAME =~ "FD*" || REF_NAME =~ "SRL*" || REF_NAME =~ "MUXF*" || REF_NAME =~ "CARRY*" || REF_NAME =~ "DSP48E1"}'. [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/constraints/pblock.xdc:4]
+Finished Parsing XDC File [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/constraints/pblock.xdc]
+INFO: [Project 1-236] Implementation specific constraints were found while reading constraint file [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/constraints/pblock.xdc]. These constraints will be ignored for synthesis but will be used in implementation. Impacted constraints are listed in the file [.Xil/cnn_top_propImpl.xdc].
+Resolution: To avoid this warning, move constraints listed in [.Xil/cnn_top_propImpl.xdc] to another XDC file and exclude this new file from synthesis with the used_in_synthesis property (File Properties dialog in GUI) and re-run elaboration/synthesis.
+Completed Processing XDC Constraints
+
+Netlist sorting complete. Time (s): cpu = 00:00:00.01 ; elapsed = 00:00:00 . Memory (MB): peak = 2035.043 ; gain = 0.000 ; free physical = 2990 ; free virtual = 14822
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+Constraint Validation Runtime : Time (s): cpu = 00:00:00 ; elapsed = 00:00:00.01 . Memory (MB): peak = 2035.043 ; gain = 0.000 ; free physical = 2990 ; free virtual = 14822
+---------------------------------------------------------------------------------
+Finished Constraint Validation : Time (s): cpu = 00:00:05 ; elapsed = 00:00:09 . Memory (MB): peak = 2035.043 ; gain = 395.020 ; free physical = 3070 ; free virtual = 14902
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Loading Part and Timing Information
+---------------------------------------------------------------------------------
+Loading part: xc7z020clg400-1
+---------------------------------------------------------------------------------
+Finished Loading Part and Timing Information : Time (s): cpu = 00:00:05 ; elapsed = 00:00:09 . Memory (MB): peak = 2035.043 ; gain = 395.020 ; free physical = 3070 ; free virtual = 14902
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Applying 'set_property' XDC Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished applying 'set_property' XDC Constraints : Time (s): cpu = 00:00:05 ; elapsed = 00:00:09 . Memory (MB): peak = 2035.043 ; gain = 395.020 ; free physical = 3070 ; free virtual = 14902
+---------------------------------------------------------------------------------
+INFO: [Synth 8-802] inferred FSM for state register 'current_state_reg' in module 'cnn_controller'
+---------------------------------------------------------------------------------------------------
+                   State |                     New Encoding |                Previous Encoding 
+---------------------------------------------------------------------------------------------------
+                    IDLE |                               01 |                               00
+               COMPUTING |                               11 |                               01
+                   VALID |                               10 |                               11
+                   KREAD |                               00 |                               10
+---------------------------------------------------------------------------------------------------
+INFO: [Synth 8-3354] encoded FSM with state register 'current_state_reg' using encoding 'sequential' in module 'cnn_controller'
+---------------------------------------------------------------------------------
+Finished RTL Optimization Phase 2 : Time (s): cpu = 00:00:05 ; elapsed = 00:00:09 . Memory (MB): peak = 2035.043 ; gain = 395.020 ; free physical = 3062 ; free virtual = 14893
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start RTL Component Statistics 
+---------------------------------------------------------------------------------
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      7 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 2     
++---Registers : 
+	                9 Bit    Registers := 9     
+	                8 Bit    Registers := 104   
+	                7 Bit    Registers := 1     
+	                4 Bit    Registers := 2     
++---Muxes : 
+	   2 Input     20 Bit        Muxes := 2     
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 5     
+	   2 Input      1 Bit        Muxes := 1     
+---------------------------------------------------------------------------------
+Finished RTL Component Statistics 
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start RTL Hierarchical Component Statistics 
+---------------------------------------------------------------------------------
+Hierarchical RTL Component report 
+Module cnn_controller 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      7 Bit       Adders := 1     
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	                7 Bit    Registers := 1     
+	                4 Bit    Registers := 1     
++---Muxes : 
+	   2 Input      7 Bit        Muxes := 1     
+	   2 Input      4 Bit        Muxes := 1     
+	   4 Input      2 Bit        Muxes := 1     
+	   2 Input      2 Bit        Muxes := 5     
+	   2 Input      1 Bit        Muxes := 1     
+Module kernel_coeff_memory 
+Detailed RTL Component Info : 
++---Adders : 
+	   2 Input      4 Bit       Adders := 1     
++---Registers : 
+	                8 Bit    Registers := 9     
+	                4 Bit    Registers := 1     
+Module line_buffer 
+Detailed RTL Component Info : 
++---Registers : 
+	                8 Bit    Registers := 29    
+Module window_nxn 
+Detailed RTL Component Info : 
++---Registers : 
+	                8 Bit    Registers := 9     
+Module tree_nxn 
+Detailed RTL Component Info : 
++---Registers : 
+	                9 Bit    Registers := 9     
+	                8 Bit    Registers := 28    
+Module output_stage 
+Detailed RTL Component Info : 
++---Muxes : 
+	   2 Input     20 Bit        Muxes := 2     
+---------------------------------------------------------------------------------
+Finished RTL Hierarchical Component Statistics
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Part Resource Summary
+---------------------------------------------------------------------------------
+Part Resources:
+DSPs: 220 (col length:60)
+BRAMs: 280 (col length: RAMB18 60 RAMB36 30)
+---------------------------------------------------------------------------------
+Finished Part Resource Summary
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Cross Boundary and Area Optimization
+---------------------------------------------------------------------------------
+Warning: Parallel synthesis criteria is not met 
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[3][1][7:0]' into 'window_generator_inst/window_pixels_reg[7][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[4][1][7:0]' into 'window_generator_inst/genblk1[2].line_buffer_inst/pixel_delay_reg[0][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[4][2][7:0]' into 'window_generator_inst/genblk1[2].line_buffer_inst/pixel_delay_reg[1][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[5][1][7:0]' into 'window_generator_inst/window_pixels_reg[3][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[5][2][7:0]' into 'window_generator_inst/genblk1[2].line_buffer_inst/pixel_delay_reg[0][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[5][3][7:0]' into 'window_generator_inst/genblk1[2].line_buffer_inst/pixel_delay_reg[1][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[6][1][7:0]' into 'window_generator_inst/window_pixels_reg[4][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[6][2][7:0]' into 'window_generator_inst/window_pixels_reg[3][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[6][3][7:0]' into 'window_generator_inst/genblk1[2].line_buffer_inst/pixel_delay_reg[0][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[6][4][7:0]' into 'window_generator_inst/genblk1[2].line_buffer_inst/pixel_delay_reg[1][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[7][1][7:0]' into 'window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[0][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[7][2][7:0]' into 'window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[1][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[7][3][7:0]' into 'window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[2][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[7][4][7:0]' into 'window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[3][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[7][5][7:0]' into 'window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[4][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[8][1][7:0]' into 'window_generator_inst/window_pixels_reg[0][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[8][2][7:0]' into 'window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[0][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[8][3][7:0]' into 'window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[1][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[8][4][7:0]' into 'window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[2][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[8][5][7:0]' into 'window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[3][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[8][6][7:0]' into 'window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[4][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[9][1][7:0]' into 'window_generator_inst/window_pixels_reg[1][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[9][2][7:0]' into 'window_generator_inst/window_pixels_reg[0][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[9][3][7:0]' into 'window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[0][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[9][4][7:0]' into 'window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[1][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[9][5][7:0]' into 'window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[2][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[9][6][7:0]' into 'window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[3][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+INFO: [Synth 8-4471] merging register 'kernel_pipeline[0].mac_pipeline_inst/delayed_window_pixels_reg[9][7][7:0]' into 'window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[4][7:0]' [/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v:21]
+DSP Report: Generating DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[1], operation Mode is: (A''*B'')'.
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[1] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[1].
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[0] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[1].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[1] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[1].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[1] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[1].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[1] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[1].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/multiplication_result_reg[1] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[1].
+DSP Report: operator p_0_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[1].
+DSP Report: Generating DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[2], operation Mode is: (PCIN+(A''*B'')')'.
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[2] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[2].
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[1] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[2].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[2] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[2].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[2] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[2].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[2] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[2].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/multiplication_result_reg[2] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[2].
+DSP Report: operator p_1_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[2].
+DSP Report: operator p_0_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[2].
+DSP Report: Generating DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[3], operation Mode is: (PCIN+(A''*B'')')'.
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[3] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[3].
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[2] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[3].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[3] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[3].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[3] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[3].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[3] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[3].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/multiplication_result_reg[3] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[3].
+DSP Report: operator p_1_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[3].
+DSP Report: operator p_0_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[3].
+DSP Report: Generating DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[4], operation Mode is: (PCIN+(A''*B'')')'.
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[4] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[4].
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[3] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[4].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[4] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[4].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[4] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[4].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[4] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[4].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/multiplication_result_reg[4] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[4].
+DSP Report: operator p_1_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[4].
+DSP Report: operator p_0_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[4].
+DSP Report: Generating DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[5], operation Mode is: (PCIN+(A''*B'')')'.
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[5] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[5].
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[4] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[5].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[5] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[5].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[5] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[5].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[5] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[5].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/multiplication_result_reg[5] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[5].
+DSP Report: operator p_1_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[5].
+DSP Report: operator p_0_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[5].
+DSP Report: Generating DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[6], operation Mode is: (PCIN+(A''*B'')')'.
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[6] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[6].
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[5] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[6].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[6] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[6].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[6] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[6].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[6] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[6].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/multiplication_result_reg[6] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[6].
+DSP Report: operator p_1_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[6].
+DSP Report: operator p_0_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[6].
+DSP Report: Generating DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[7], operation Mode is: (PCIN+(A''*B'')')'.
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[7] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[7].
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[6] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[7].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[7] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[7].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[7] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[7].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[7] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[7].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/multiplication_result_reg[7] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[7].
+DSP Report: operator p_1_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[7].
+DSP Report: operator p_0_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[7].
+DSP Report: Generating DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[8], operation Mode is: (PCIN+(A''*B'')')'.
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[8] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[8].
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[7] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[8].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[8] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[8].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[8] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[8].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[8] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[8].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/multiplication_result_reg[8] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[8].
+DSP Report: operator p_1_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[8].
+DSP Report: operator p_0_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[8].
+DSP Report: Generating DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[9], operation Mode is: (PCIN+(A''*B2)')'.
+DSP Report: register kernel_memory_inst/kernel_coefficients_reg[8] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[9].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[9] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[9].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[9] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[9].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[9] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[9].
+DSP Report: register kernel_pipeline[0].mac_pipeline_inst/multiplication_result_reg[9] is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[9].
+DSP Report: operator p_1_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[9].
+DSP Report: operator p_0_out is absorbed into DSP kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[9].
+---------------------------------------------------------------------------------
+Finished Cross Boundary and Area Optimization : Time (s): cpu = 00:00:05 ; elapsed = 00:00:10 . Memory (MB): peak = 2035.043 ; gain = 395.020 ; free physical = 3050 ; free virtual = 14885
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+DSP: Preliminary Mapping  Report (see note below)
++------------+--------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|Module Name | DSP Mapping        | A Size | B Size | C Size | D Size | P Size | AREG | BREG | CREG | DREG | ADREG | MREG | PREG | 
++------------+--------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+|cnn_top     | (A''*B'')'         | 9      | 8      | -      | -      | 17     | 2    | 2    | -    | -    | -     | 1    | 1    | 
+|cnn_top     | (PCIN+(A''*B'')')' | 9      | 8      | -      | -      | 20     | 2    | 2    | -    | -    | -     | 1    | 1    | 
+|cnn_top     | (PCIN+(A''*B'')')' | 9      | 8      | -      | -      | 20     | 2    | 2    | -    | -    | -     | 1    | 1    | 
+|cnn_top     | (PCIN+(A''*B'')')' | 9      | 8      | -      | -      | 20     | 2    | 2    | -    | -    | -     | 1    | 1    | 
+|cnn_top     | (PCIN+(A''*B'')')' | 9      | 8      | -      | -      | 20     | 2    | 2    | -    | -    | -     | 1    | 1    | 
+|cnn_top     | (PCIN+(A''*B'')')' | 9      | 8      | -      | -      | 20     | 2    | 2    | -    | -    | -     | 1    | 1    | 
+|cnn_top     | (PCIN+(A''*B'')')' | 9      | 8      | -      | -      | 20     | 2    | 2    | -    | -    | -     | 1    | 1    | 
+|cnn_top     | (PCIN+(A''*B'')')' | 9      | 8      | -      | -      | 20     | 2    | 2    | -    | -    | -     | 1    | 1    | 
+|cnn_top     | (PCIN+(A''*B2)')'  | 9      | 8      | -      | -      | 20     | 2    | 1    | -    | -    | -     | 1    | 1    | 
++------------+--------------------+--------+--------+--------+--------+--------+------+------+------+------+-------+------+------+
+
+Note: The table above is a preliminary report that shows the DSPs inferred at the current stage of the synthesis flow. Some DSP may be reimplemented as non DSP primitives later in the synthesis flow. Multiple instantiated DSPs are reported only once.
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Applying XDC Timing Constraints
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Applying XDC Timing Constraints : Time (s): cpu = 00:00:09 ; elapsed = 00:00:13 . Memory (MB): peak = 2035.043 ; gain = 395.020 ; free physical = 2893 ; free virtual = 14728
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Timing Optimization
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Timing Optimization : Time (s): cpu = 00:00:09 ; elapsed = 00:00:13 . Memory (MB): peak = 2035.043 ; gain = 395.020 ; free physical = 2889 ; free virtual = 14724
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Technology Mapping
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Technology Mapping : Time (s): cpu = 00:00:09 ; elapsed = 00:00:13 . Memory (MB): peak = 2035.043 ; gain = 395.020 ; free physical = 2888 ; free virtual = 14723
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Flattening Before IO Insertion
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Final Netlist Cleanup
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished IO Insertion : Time (s): cpu = 00:00:10 ; elapsed = 00:00:14 . Memory (MB): peak = 2035.043 ; gain = 395.020 ; free physical = 2887 ; free virtual = 14722
+---------------------------------------------------------------------------------
+
+Report Check Netlist: 
++------+------------------+-------+---------+-------+------------------+
+|      |Item              |Errors |Warnings |Status |Description       |
++------+------------------+-------+---------+-------+------------------+
+|1     |multi_driven_nets |      0|        0|Passed |Multi driven nets |
++------+------------------+-------+---------+-------+------------------+
+---------------------------------------------------------------------------------
+Start Renaming Generated Instances
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Instances : Time (s): cpu = 00:00:10 ; elapsed = 00:00:14 . Memory (MB): peak = 2035.043 ; gain = 395.020 ; free physical = 2887 ; free virtual = 14722
+---------------------------------------------------------------------------------
+
+Report RTL Partitions: 
++-+--------------+------------+----------+
+| |RTL Partition |Replication |Instances |
++-+--------------+------------+----------+
++-+--------------+------------+----------+
+---------------------------------------------------------------------------------
+Start Rebuilding User Hierarchy
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Rebuilding User Hierarchy : Time (s): cpu = 00:00:10 ; elapsed = 00:00:14 . Memory (MB): peak = 2035.043 ; gain = 395.020 ; free physical = 2883 ; free virtual = 14718
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Ports
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Ports : Time (s): cpu = 00:00:10 ; elapsed = 00:00:14 . Memory (MB): peak = 2035.043 ; gain = 395.020 ; free physical = 2883 ; free virtual = 14718
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Handling Custom Attributes
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Handling Custom Attributes : Time (s): cpu = 00:00:10 ; elapsed = 00:00:14 . Memory (MB): peak = 2035.043 ; gain = 395.020 ; free physical = 2882 ; free virtual = 14717
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Renaming Generated Nets
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Finished Renaming Generated Nets : Time (s): cpu = 00:00:10 ; elapsed = 00:00:14 . Memory (MB): peak = 2035.043 ; gain = 395.020 ; free physical = 2882 ; free virtual = 14716
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+
+Static Shift Register Report:
++------------+-------------------------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|Module Name | RTL Name                                                                | Length | Width | Reset Signal | Pull out first Reg | Pull out last Reg | SRL16E | SRLC32E | 
++------------+-------------------------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+|cnn_top     | window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[4][7] | 8      | 8     | NO           | NO                 | YES               | 8      | 0       | 
+|cnn_top     | window_generator_inst/genblk1[2].line_buffer_inst/pixel_delay_reg[1][7] | 29     | 8     | NO           | NO                 | YES               | 0      | 8       | 
+|cnn_top     | window_generator_inst/window_pixels_reg[7][7]                           | 29     | 8     | NO           | NO                 | YES               | 0      | 8       | 
++------------+-------------------------------------------------------------------------+--------+-------+--------------+--------------------+-------------------+--------+---------+
+
+---------------------------------------------------------------------------------
+Finished ROM, RAM, DSP and Shift Register Reporting
+---------------------------------------------------------------------------------
+---------------------------------------------------------------------------------
+Start Writing Synthesis Report
+---------------------------------------------------------------------------------
+
+Report BlackBoxes: 
++-+--------------+----------+
+| |BlackBox name |Instances |
++-+--------------+----------+
++-+--------------+----------+
+
+Report Cell Usage: 
++------+----------+------+
+|      |Cell      |Count |
++------+----------+------+
+|1     |BUFG      |     1|
+|2     |DSP48E1   |     8|
+|3     |DSP48E1_1 |     1|
+|4     |LUT1      |     3|
+|5     |LUT2      |     2|
+|6     |LUT3      |    23|
+|7     |LUT4      |     7|
+|8     |LUT5      |     5|
+|9     |LUT6      |     6|
+|10    |SRL16E    |     8|
+|11    |SRLC32E   |    16|
+|12    |FDCE      |    12|
+|13    |FDPE      |     1|
+|14    |FDRE      |    84|
+|15    |IBUF      |    12|
+|16    |OBUF      |    21|
++------+----------+------+
+
+Report Instance Areas: 
++------+-----------------------------------------+--------------------+------+
+|      |Instance                                 |Module              |Cells |
++------+-----------------------------------------+--------------------+------+
+|1     |top                                      |                    |   210|
+|2     |  controller_inst                        |cnn_controller      |    33|
+|3     |  kernel_memory_inst                     |kernel_coeff_memory |    67|
+|4     |  \kernel_pipeline[0].mac_pipeline_inst  |tree_nxn            |    28|
+|5     |  window_generator_inst                  |window_nxn          |    48|
+|6     |    \genblk1[1].line_buffer_inst         |line_buffer         |    16|
+|7     |    \genblk1[2].line_buffer_inst         |line_buffer_0       |    16|
++------+-----------------------------------------+--------------------+------+
+---------------------------------------------------------------------------------
+Finished Writing Synthesis Report : Time (s): cpu = 00:00:10 ; elapsed = 00:00:14 . Memory (MB): peak = 2035.043 ; gain = 395.020 ; free physical = 2876 ; free virtual = 14710
+---------------------------------------------------------------------------------
+Synthesis finished with 0 errors, 0 critical warnings and 0 warnings.
+Synthesis Optimization Runtime : Time (s): cpu = 00:00:08 ; elapsed = 00:00:12 . Memory (MB): peak = 2035.043 ; gain = 213.395 ; free physical = 2939 ; free virtual = 14773
+Synthesis Optimization Complete : Time (s): cpu = 00:00:10 ; elapsed = 00:00:14 . Memory (MB): peak = 2035.043 ; gain = 395.020 ; free physical = 2953 ; free virtual = 14788
+INFO: [Project 1-571] Translating synthesized netlist
+INFO: [Netlist 29-17] Analyzing 9 Unisim elements for replacement
+INFO: [Netlist 29-28] Unisim Transformation completed in 0 CPU seconds
+INFO: [Project 1-570] Preparing netlist for logic optimization
+INFO: [Opt 31-138] Pushed 0 inverter(s) to 0 load pin(s).
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2047.020 ; gain = 0.000 ; free physical = 2891 ; free virtual = 14726
+INFO: [Project 1-111] Unisim Transformation Summary:
+No Unisim elements were transformed.
+
+INFO: [Common 17-83] Releasing license: Synthesis
+59 Infos, 3 Warnings, 0 Critical Warnings and 0 Errors encountered.
+synth_design completed successfully
+synth_design: Time (s): cpu = 00:00:12 ; elapsed = 00:00:17 . Memory (MB): peak = 2047.020 ; gain = 525.320 ; free physical = 2993 ; free virtual = 14828
+Netlist sorting complete. Time (s): cpu = 00:00:00 ; elapsed = 00:00:00 . Memory (MB): peak = 2047.020 ; gain = 0.000 ; free physical = 2993 ; free virtual = 14828
+WARNING: [Constraints 18-5210] No constraints selected for write.
+Resolution: This message can indicate that there are no constraints for the design, or it can indicate that the used_in flags are set such that the constraints are ignored. This later case is used when running synth_design to not write synthesis constraints to the resulting checkpoint. Instead, project constraints are read when the synthesized design is opened.
+INFO: [Common 17-1381] The checkpoint '/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/project_9/project_9.runs/synth_1/cnn_top.dcp' has been generated.
+INFO: [runtcl-4] Executing : report_utilization -file cnn_top_utilization_synth.rpt -pb cnn_top_utilization_synth.pb
+INFO: [Common 17-206] Exiting Vivado at Wed Sep 23 20:32:04 2026...

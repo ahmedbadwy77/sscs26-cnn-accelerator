@@ -1,0 +1,27 @@
+Vivado Simulator 2019.1
+Copyright 1986-1999, 2001-2019 Xilinx, Inc. All Rights Reserved.
+Running: /home/Xilinx/Vivado/2019.1/bin/unwrapped/lnx64.o/xelab -wto e5abda5f0131475287e477b25e789f91 --incr --debug typical --relax --mt 8 -L xil_defaultlib -L unisims_ver -L unimacro_ver -L secureip --snapshot cnn_top_tb_behav xil_defaultlib.cnn_top_tb xil_defaultlib.glbl -log elaborate.log 
+Using 8 slave threads.
+Starting static elaboration
+Completed static elaboration
+Starting simulation data flow analysis
+WARNING: [XSIM 43-4099] "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/cnn_top.v" Line 1. Module cnn_top_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/cnn_controller.v" Line 1. Module cnn_controller_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/kernel_coeff_memory.v" Line 1. Module kernel_coeff_memory_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/window_nxn.v" Line 1. Module window_nxn_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/line_buffer.v" Line 1. Module line_buffer doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/line_buffer.v" Line 1. Module line_buffer doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v" Line 1. Module tree_nxn_default doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/output_stage.v" Line 1. Module output_stage doesn't have a timescale but at least one module in design has a timescale.
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling module xil_defaultlib.cnn_controller_default
+Compiling module xil_defaultlib.kernel_coeff_memory_default
+Compiling module xil_defaultlib.line_buffer
+Compiling module xil_defaultlib.window_nxn_default
+Compiling module xil_defaultlib.tree_nxn_default
+Compiling module xil_defaultlib.output_stage
+Compiling module xil_defaultlib.cnn_top_default
+Compiling module xil_defaultlib.cnn_top_tb
+Compiling module xil_defaultlib.glbl
+Built simulation snapshot cnn_top_tb_behav

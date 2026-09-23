@@ -1,0 +1,22 @@
+Vivado Simulator 2019.1
+Time resolution is 1 ps
+PYTHON GOLDEN FILE: opened successfully
+KERNELS LOADED. PAUSING TO START SAIF...
+$stop called at time : 635 ns : File "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/tb/cnn_top_tb.sv" Line 297
+PYTHON CHECK #1: PASS kernel=0 expected=67 got=67
+PYTHON CHECK #2: PASS kernel=0 expected=68 got=68
+PYTHON CHECK #3: PASS kernel=0 expected=69 got=69
+PYTHON CHECK #4: PASS kernel=0 expected=70 got=70
+PYTHON CHECK #5: PASS kernel=0 expected=71 got=71
+PYTHON CHECK #6: PASS kernel=0 expected=72 got=72
+PYTHON CHECK #7: PASS kernel=0 expected=73 got=73
+PYTHON CHECK #8: PASS kernel=0 expected=74 got=74
+PYTHON CHECK #9: PASS kernel=0 expected=75 got=75
+PYTHON CHECK #10: PASS kernel=0 expected=76 got=76
+>>> ACTIVE WINDOW FINISHED: STOPPING SAIF <<<
+$stop called at time : 24350 ns : File "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/tb/cnn_top_tb.sv" Line 302
+----------------------------------------
+PYTHON GOLDEN CHECK: checked=2596 expected=2596 mismatches=0
+TB_RESULT: PASS N=3 W=32 RELU=1 K=1 checked=2596 x=0
+RTL vs PYTHON GOLDEN: PASS
+$finish called at time : 65450 ns : File "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/tb/cnn_top_tb.sv" Line 328

@@ -1,0 +1,16 @@
+INFO: [VRFC 10-2263] Analyzing Verilog file "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/cnn_controller.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cnn_controller
+INFO: [VRFC 10-2263] Analyzing Verilog file "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/cnn_top.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cnn_top
+INFO: [VRFC 10-2263] Analyzing Verilog file "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/kernel_coeff_memory.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module kernel_coeff_memory
+INFO: [VRFC 10-2263] Analyzing Verilog file "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/line_buffer.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module line_buffer
+INFO: [VRFC 10-2263] Analyzing Verilog file "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/output_stage.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module output_stage
+INFO: [VRFC 10-2263] Analyzing Verilog file "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/tree_nxn.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module tree_nxn
+INFO: [VRFC 10-2263] Analyzing Verilog file "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/rtl/window_nxn.v" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module window_nxn
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "/mnt/hgfs/Digital_Shared_Folder/Best_design_v2_compare/LAST_VERISON/tb/cnn_top_tb.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cnn_top_tb

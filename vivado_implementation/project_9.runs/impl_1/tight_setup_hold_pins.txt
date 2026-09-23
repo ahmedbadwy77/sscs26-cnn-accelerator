@@ -1,0 +1,11 @@
++--------------------------+--------------------------+----------------------------------------------------------------------------------------------------------+
+|       Launch Clock       |      Capture Clock       |                                                 Pin                                                      |
++--------------------------+--------------------------+----------------------------------------------------------------------------------------------------------+
+|                  sys_clk |                  sys_clk |                                                                  controller_inst/compute_counter_reg[4]/D|
+|                  sys_clk |                  sys_clk |                                                     controller_inst/FSM_sequential_current_state_reg[0]/D|
+|                  sys_clk |                  sys_clk |                                                                  controller_inst/compute_counter_reg[6]/D|
+|                  sys_clk |                  sys_clk |                                                                  controller_inst/compute_counter_reg[5]/D|
+|                  sys_clk |                  sys_clk |                                                                  controller_inst/compute_counter_reg[2]/D|
+|                  sys_clk |                  sys_clk |                                                                kernel_memory_inst/kernel_counter_reg[3]/D|
+|                  sys_clk |                  sys_clk |                                                                    controller_inst/flush_counter_reg[3]/D|
++--------------------------+--------------------------+----------------------------------------------------------------------------------------------------------+
