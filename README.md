@@ -53,9 +53,9 @@ Format follows the required reporting table of the competition announcement.
 | Throughput | 1 pixel/cycle — **bonus** | **Met** | pixels/cycle | steady state; `NUM_KERNELS` replicates MAC/output per kernel |
 | FPGA utilization | LUTs / FFs / DSPs / BRAMs | **50 / 97 / 9 / 0** (routed) | — | `doc/AI_Accelerator_Report.pdf` |
 | Maximum frequency | Report | **464 MHz** at 2.155 ns constraint; WNS +0.003 ns, 0 failing endpoints | MHz | selected routed MAX-FREQ operating point — not derived from WNS |
-| Power estimate | Report | **0.129 W** (0.097 static + 0.027 dynamic) | W | SAIF-annotated estimate on the active window (High Confidence); Vccint scaled to 0.950 V |
+| Power estimate | Report | **0.129 W** vectorless (0.097 W static) | W | Official FOM basis. SAIF-annotated active-window estimate is 0.105 W (High Confidence); Vccint scaled to 0.950 V |
 | Verification status | Golden model (Python/MATLAB/C) | Python golden model — **2596/2596 bit-exact**, 7/7 matrix, 900-output system test | — | zero mismatches, zero X in valid windows |
-| FOM | Required formula | **0.01550** | — | 1 / [0.129 × (51 + 50×9 + 100×0)] |
+| FOM | Required formula | **0.01550** | — | 1 / [0.129 × (50 + 50×9 + 100×0)] |
 
 ## Architecture
 
