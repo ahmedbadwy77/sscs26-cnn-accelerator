@@ -4,7 +4,7 @@
 
 # Streaming CNN Accelerator on Xilinx Zynq-7020
 
-**Parameterized N×N 2-D convolution core · DSP48E1 MAC cascade · 400 MHz routed operating point**
+**Parameterized N×N 2-D convolution core · DSP48E1 MAC cascade · 464 MHz routed operating point**
 
 [![HDL](https://img.shields.io/badge/HDL-Verilog--2001-1e90ff)](rtl/)
 [![Python](https://img.shields.io/badge/Golden%20Model-Python%203-3776AB?logo=python&logoColor=white)](python/golden_model.py)
@@ -25,7 +25,7 @@
 
 | LUTs | FFs | DSP48E1 | BRAM | MAX FREQ | Power | Throughput | FOM | Verification |
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
-| **51** | **97** | **9** | **0** | **400 MHz** | **0.124 W** | **1 pixel/cycle** | **0.01610** | **2596/2596** |
+| **50** | **97** | **9** | **0** | **464 MHz** | **0.129 W** | **1 pixel/cycle** | **0.01550** | **2596/2596** |
 
 Bit-exact against an independent Python golden model across **21 regression configurations** (7 kernel/image/ReLU settings × 1–3 parallel kernels), routed and timed on `xc7z020clg400-1`.
 
@@ -51,11 +51,11 @@ Format follows the required reporting table of the competition announcement.
 | Pipeline stages | Pipelined convolution | Registered multiply + N²-stage cascade | — | staggered accumulation, absorbed by fill period |
 | Latency | — | **76 cycles** to first output pixel | cycles | FILL 66 + pipeline 10; equations parameterized by N, W |
 | Throughput | 1 pixel/cycle — **bonus** | **Met** | pixels/cycle | steady state; `NUM_KERNELS` replicates MAC/output per kernel |
-| FPGA utilization | LUTs / FFs / DSPs / BRAMs | **51 / 97 / 9 / 0** (routed) | — | `doc/AI_Accelerator_Report.pdf` |
-| Maximum frequency | Report | **400 MHz** at 2.5 ns constraint; WNS +0.005 ns, 0 failing endpoints | MHz | selected routed MAX-FREQ operating point — not derived from WNS |
-| Power estimate | Report | **0.124 W** (0.097 static + 0.027 dynamic) | W | SAIF-annotated estimate on the active window (High Confidence); Vccint scaled to 0.950 V |
+| FPGA utilization | LUTs / FFs / DSPs / BRAMs | **50 / 97 / 9 / 0** (routed) | — | `doc/AI_Accelerator_Report.pdf` |
+| Maximum frequency | Report | **464 MHz** at 2.155 ns constraint; WNS +0.003 ns, 0 failing endpoints | MHz | selected routed MAX-FREQ operating point — not derived from WNS |
+| Power estimate | Report | **0.129 W** (0.097 static + 0.027 dynamic) | W | SAIF-annotated estimate on the active window (High Confidence); Vccint scaled to 0.950 V |
 | Verification status | Golden model (Python/MATLAB/C) | Python golden model — **2596/2596 bit-exact**, 7/7 matrix, 900-output system test | — | zero mismatches, zero X in valid windows |
-| FOM | Required formula | **0.01610** | — | 1 / [0.124 × (51 + 50×9 + 100×0)] |
+| FOM | Required formula | **0.01550** | — | 1 / [0.129 × (51 + 50×9 + 100×0)] |
 
 ## Architecture
 
@@ -95,7 +95,7 @@ flowchart LR
     SYSFSM -->|"done · 900 valid outputs"| HOST
 ```
 
-For N=3 there are 9 taps and 9 DSP48E1 blocks; accumulation stays in the DSP cascade, which is what keeps fabric utilization at 51 LUTs while sustaining 1 pixel/cycle. All on-chip storage maps to SRL shift registers — the design uses **zero BRAMs**.
+For N=3 there are 9 taps and 9 DSP48E1 blocks; accumulation stays in the DSP cascade, which is what keeps fabric utilization at 50 LUTs while sustaining 1 pixel/cycle. All on-chip storage maps to SRL shift registers — the design uses **zero BRAMs**.
 
 ![Datapath](images/datapath.png)
 
@@ -107,7 +107,7 @@ For N=3 there are 9 taps and 9 DSP48E1 blocks; accumulation stays in the DSP cas
 - **One RTL, many designs.** The same parameterized sources verify N=3…7 and K=1…3 alongside the 51-LUT competition baseline; the report documents the full resource-scaling study.
 - **Measured, not assumed.** The multiplier decision is backed by a routed DSP-free A/B build (792 LUTs, 143 MHz) that loses to the DSP design on FOM **even when each side is evaluated at its own MAX-FREQ operating point**.
 - **Warm-pipeline restart.** Bursts run back-to-back without re-resetting; the persistent-valid protocol eliminates inter-burst gaps in the output stream.
-- **SAIF-driven power optimization.** Outputs freeze at zero outside valid windows and Vccint is scaled to 0.950 V; a SAIF-annotated power study brings the estimate to **0.124 W** - lifting the competition FOM to **0.01610**.
+- **SAIF-driven power optimization.** Outputs freeze at zero outside valid windows and Vccint is scaled to 0.950 V; a SAIF-annotated power study on the final 2.155 ns netlist gives a High-Confidence active-window estimate of **0.105 W**, while the conservative vectorless estimate carried into the competition FOM is **0.129 W** - a competition FOM of **0.01550**.
 - **Golden vectors under CI.** Every push regenerates all 21 expected-output files and verifies them byte-identically (badge at the top).
 
 ## Competition Bonus Features
@@ -244,14 +244,14 @@ The bonus system wrapper is verified independently of the core regression above:
 
 ## Design-Space Exploration
 
-A DSP-free fabric multiplier/accumulator reference was implemented to validate the multiplier decision. **Each architecture is evaluated at its own routed MAX-FREQ operating point** (the DSP design closes 2.5 ns; the fabric reference closes 143 MHz).
+A DSP-free fabric multiplier/accumulator reference was implemented to validate the multiplier decision. **Each architecture is evaluated at its own routed MAX-FREQ operating point** (the DSP design closes 2.155 ns; the fabric reference closes 143 MHz).
 
 | Architecture | LUTs | FFs | DSPs | MAX FREQ | Power | FOM |
 |---|:-:|:-:|:-:|:-:|:-:|:-:|
-| **DSP48E1-based (selected)** | 51 | 97 | 9 | 400 MHz | 0.124 W | **0.01610** |
+| **DSP48E1-based (selected)** | 50 | 97 | 9 | 464 MHz | 0.129 W | **0.01550** |
 | DSP-free fabric reference | 792 | 441 | 0 | 143 MHz | 0.125 W | 0.01010 |
 
-DSP usage was **intentionally retained**: the DSP-based design uses ~15× fewer LUTs, runs at ~2.8× the frequency, and achieves a **+59.4% higher FOM** (0.01610 vs 0.01010).
+DSP usage was **intentionally retained**: the DSP-based design uses ~16× fewer LUTs, runs at ~3.2× the frequency, and achieves a **+53.5% higher FOM** (0.01550 vs 0.01010).
 
 ![Figure-of-merit comparison](images/fom_comparison.png)
 
@@ -261,27 +261,44 @@ DSP usage was **intentionally retained**: the DSP-based design uses ~15× fewer 
 
 | Item | Value |
 |---|---|
-| Clock constraint | 2.5 ns |
-| MAX FREQ operating point | 400 MHz |
-| WNS | +0.005 ns |
-| WHS | +0.138 ns |
+| Clock constraint | 2.155 ns |
+| MAX FREQ operating point | 464 MHz |
+| WNS | +0.003 ns |
+| WHS | +0.029 ns |
 | Failing endpoints | 0 |
 
-**Note:** 400 MHz is the *selected routed MAX-FREQ operating point* for the 2.5 ns constraint — it is **not** derived by subtracting WNS from the target period. WNS (+0.005 ns) is timing margin only. The XDC exempts I/O timing (false paths on non-clock I/O); it is a core-Fmax benchmarking constraint, not board bring-up.
+**Note:** 464 MHz is the *selected routed MAX-FREQ operating point* for the 2.155 ns constraint — it is **not** derived by subtracting WNS from the target period. WNS (+0.003 ns) is timing margin only. The XDC exempts I/O timing (false paths on non-clock I/O); it is a core-Fmax benchmarking constraint, not board bring-up.
 
 ![Timing summary](images/timing_report.png)
 
 ![MAX-FREQ clock summary](images/max_freq_report.png)
 
+### Timing Closure at 2.155 ns (464 MHz)
+
+The final implementation is constrained at **2.155 ns** and closes with **WNS +0.003 ns, WHS +0.029 ns and zero failing endpoints**. Two facts about that number matter:
+
+- **It is the device's hard floor, not a tuning artefact.** The post-route timing report's *Pulse Width Checks* section lists `Min Period BUFG/I` = **2.155 ns** and `Min Period DSP48E1/CLK` = **2.154 ns** - speed-grade library limits for the target part that are independent of the design. At the 2.155 ns constraint those checks have ~0.000-0.001 ns of slack: the clock network and the DSP48E1 clock pins cannot be driven faster on this device. A period sweep (2.400 ns down to 2.155 ns) confirms that nothing below 2.155 ns closes.
+- **It is an internal register-to-register frequency.** The XDC false-paths all non-clock I/O, so the reported Fmax characterises the core datapath only. It is a core-Fmax benchmarking constraint, not a board-level timing sign-off: adding real `set_input_delay`/`set_output_delay` would place the pin-level figure substantially lower.
+
+Two deliberate levers got the last picoseconds:
+
+| Lever | Setting | Rationale |
+|---|---|---|
+| Quasi-static path relaxation | `set_multicycle_path -setup 4 / -hold 3` from `kernel_memory_inst/kernel_coefficients_reg*`, and from `kernel_counter_reg*` to `DSP48E1` | The coefficient bus and the counter feeding the multiply are **static during compute** - measured at **0 changes across 2904 `cnn_en` cycles**. Paths that are genuinely single-cycle (the counter-to-coefficient-flop clock-enable path, active during kernel load) are deliberately **not** relaxed. |
+| Floorplanning | `pb_core` over `SLICE_X82Y27:SLICE_X105Y62 DSP48_X0Y9:DSP48_X4Y25` | Reduces the routing-dominated interconnect delay of the critical path (see below). |
+
+The implementation recipe is deliberately minimal: `opt_design` (default) -> `place_design -directive ExtraTimingOpt` -> `route_design` (default) -> post-route `phys_opt_design -directive AggressiveExplore`, with `power_opt_design`, `post_place_power_opt_design` and post-place `phys_opt_design` **disabled** - they perturbed placement without improving the result. The binding critical path is routing-dominated (63-75 % net delay, 0-1 logic levels): `window_generator_inst/genblk1[1].line_buffer_inst/pixel_delay_reg[4][3]/C` -> `kernel_pipeline[0].mac_pipeline_inst/accumulation_stage_reg[9]/A[3]`.
+
 ## Power
 
 | Component | Value |
 |---|---|
-| Total on-chip power | 0.124 W |
+| Total on-chip power (vectorless, FOM basis) | 0.129 W |
 | Static | 0.097 W |
-| Dynamic | 0.027 W |
+| Dynamic | 0.032 W |
+| SAIF active-window estimate (High Confidence) | 0.105 W |
 
-Power was optimized through a **SAIF-annotated flow**: the testbench captures switching activity for the exact active convolution window, outputs are frozen at zero outside valid windows, and **Vccint is scaled to 0.950 V** - improving the estimate from a conservative 0.125 W to **0.124 W** (High Confidence on the active window). These remain tool estimates, not silicon measurements.
+Power is reported two ways. The **official FOM basis is the post-route vectorless estimate of 0.129 W** on the final 2.155 ns netlist (0.097 W of it static - the device dominates). Independently, a **SAIF-annotated flow** captures switching activity for the exact active convolution window - outputs are frozen at zero outside valid windows and **Vccint is scaled to 0.950 V** - giving a High-Confidence active-window estimate of **0.105 W (0.097 W static + 0.008 W dynamic)**. Because the vectorless figure is the conservative one, it is the value carried into the competition FOM. These remain tool estimates, not silicon measurements.
 
 ![Power report - pre-SAIF estimate](images/power_report_pre_saif.png)
 
@@ -315,6 +332,29 @@ Post-route placement on xc7z020clg400-1:
 | ![Voltage scaling configuration](images/voltage_scaling.png) | |
 
 </details>
+
+### Floorplanning (pblock)
+
+A manual floorplan was applied to the final build rather than relying on the placer alone:
+
+```tcl
+create_pblock pb_core
+resize_pblock pb_core -add {SLICE_X82Y27:SLICE_X105Y62 DSP48_X0Y9:DSP48_X4Y25}
+add_cells_to_pblock pb_core [get_cells -hier -filter {REF_NAME =~ "LUT*" || REF_NAME =~ "FD*" || REF_NAME =~ "SRL*" || REF_NAME =~ "MUXF*" || REF_NAME =~ "CARRY*" || REF_NAME =~ "DSP48E1"}]
+```
+
+Only slice- and DSP-mappable cells are constrained: I/O and clock buffers legally cannot be placed in SLICE/DSP sites, and the range has to include DSP48 columns or the nine multipliers cannot place. The range is clipped inside the device (xc7z020 has DSP columns X0-X4 only); extending it beyond that raises `[Vivado 12-4433] Constraint ranges extend outside the device`, and tightening it too far costs the timing closure. Measured sensitivity at 2.155-2.160 ns: unconstrained **+0.007 ns**, the selected range **+0.003 ns**, an over-tight variant **+0.046 ns** (more margin, marginally lower Fmax), a deliberately wide range **-0.028 ns** (worse than no pblock at all). The floorplan is therefore a *measured* design-quality decision, not a magic ingredient - this design's timing is dominated by its own routing.
+
+### DRC and Methodology Waivers
+
+Two advisories are formally waived; both the DRC and the methodology report show **0 violations + 1 waived**, and the waivers are exported as `constraints/waiver_messages.xdc`:
+
+| Waiver | Type | Justification |
+|---|---|---|
+| `ZPS7-1` | DRC | The Zynq PS7 block is not instantiated - this is a PL-only accelerator and the ARM core is unused. |
+| `LUTAR-1` | METHODOLOGY | An asynchronous reset drives LUT/FSM inputs in the controller. Converting to a synchronous reset grows LUT usage ~28 %, moving the competition FOM the wrong way, so it is waived under the explicit contract that the reset source is synchronised and glitch-free at the system level. |
+
+The waivers are re-verifiable from the committed reports with `report_drc` / `report_methodology` followed by `report_waivers -type ALL`.
 
 ## Competition Deliverables Checklist
 
@@ -361,7 +401,10 @@ Post-route placement on xc7z020clg400-1:
 │   ├── expected/                 #   golden outputs (raw + ReLU-clamped)
 │   └── sim/                      #   ModelSim regression: tb_sobel_demo.v + run_sobel_*.do
 ├── constraints/
-│   └── timing_constraints.xdc    # clock constraints + I/O settings
+│   └── synth_constraints.xdc    # synthesis clock (20 ns) - relaxed view for aggressive implementation
+│   └── impl_constraints.xdc      # implementation clock (2.155 ns) + I/O standard + pin plan + false paths
+│   └── pblock.xdc               # floorplan (pblock) used by the final 464 MHz build
+│   └── waiver_messages.xdc      # DRC (ZPS7-1) + Methodology (LUTAR-1) waivers
 ├── python/
 │   └── golden_model.py           # pure-Python-3 golden reference model
 ├── expected_outputs/             # 21 golden output vector files (generated by golden_model.py)
@@ -370,7 +413,7 @@ Post-route placement on xc7z020clg400-1:
 │   └── 2026_SSCS_Egypt_Competition_Announcement.pdf  # competition specification
 ├── images/                       # 25 evidence figures
 ├── _regress.log                  # 7/7 PASS RTL regression summary log
-├── vivado_implementation/                # complete Vivado project: impl reports, checkpoints,
+├── vivado_implementation/                # complete Vivado project (project_9.xpr): impl reports, checkpoints,
 │                                #   post-route timing simulation + SAIF activity
 ├── README.md
 └── .gitignore
@@ -440,8 +483,8 @@ Every push that touches the golden model or expected outputs triggers the **Gold
 - **Tool-version sensitivity:** synthesis optimizations evolve between releases (logic restructuring, retiming, and DSP inference rules change the LUT/DSP/FF partition for identical RTL); placement algorithms differ, affecting routing congestion and therefore timing slack and power estimates; and resource inference can differ (e.g. one version infers an SRL16E where another maps the same shift register to flip-flops, changing LUT and FF counts with no RTL change). Benchmark comparisons should therefore use the same tool version and constraints, and results from different versions are reported separately.
 - **Source-controlled inputs:** all RTL, testbenches, sim/system scripts, the XDC, the Python golden model, all 21 golden expected-output files, the report PDF, the competition announcement, and the evidence images.
 - **Generated artifacts** (ModelSim `work/` libraries, `*.wlf`, transcripts, Vivado journals/logs/backups) are intentionally **not** committed — they are rebuilt by the commands above and covered by `.gitignore`.
-- **Vivado project included:** `vivado_implementation/` ships the complete Vivado implementation project — the `impl_10` run reports (timing, utilization, power, DRC), design checkpoints, and the post-route timing simulation (XSim) with its SAIF switching-activity file — so every reported result can be inspected directly. (The original exploratory `.xpr` projects were stale — they referenced a `../rtl_2/` directory that no longer exists — and remain excluded.)
-- **What is reproducible from this repo:** golden-vector generation, all 21 RTL regressions, the system-wrapper test, and the Sobel edge-detection demo. **What is not:** board-level I/O timing (the XDC false-paths I/O by design) — though the complete implementation project (reports, checkpoints, timing simulation + SAIF) is provided in \inal_project/\.
+- **Vivado project included:** `vivado_implementation/` ships the complete Vivado implementation project — the `impl_1` run reports (timing, utilization, power, DRC, methodology), design checkpoints, and the post-route timing simulation (XSim) with its SAIF switching-activity file — so every reported result can be inspected directly. (The original exploratory `.xpr` projects were stale — they referenced a `../rtl_2/` directory that no longer exists — and remain excluded.)
+**What is not:** board-level I/O timing (the XDC false-paths I/O by design) - though the complete implementation project (reports, checkpoints, timing simulation + SAIF) is provided in `vivado_implementation/` (project_9.xpr).
 
 ## Tools & Technologies
 
@@ -457,7 +500,7 @@ Every push that touches the golden model or expected outputs triggers the **Gold
 
 ## Conclusion
 
-This repository presents a streaming N×N CNN convolution accelerator for the Xilinx Zynq-7020, with a competition baseline of N=3, W=32, `NUM_KERNELS`=1, and ReLU enabled. The current routed baseline uses **51 LUTs, 97 FFs, 9 DSP48E1 slices, and 0 BRAMs**, with an estimated total power of **0.124 W**. The implementation meets the 2.5 ns timing constraint with **WNS +0.005 ns** and reports a **400 MHz** (MAX FREQ) clock-summary frequency; at one output pixel per cycle, the competition **FOM is 0.01610**.
+This repository presents a streaming N×N CNN convolution accelerator for the Xilinx Zynq-7020, with a competition baseline of N=3, W=32, `NUM_KERNELS`=1, and ReLU enabled. The current routed baseline uses **50 LUTs, 97 FFs, 9 DSP48E1 slices, and 0 BRAMs**, with an estimated total power of **0.129 W**. The implementation meets the 2.155 ns timing constraint with **WNS +0.003 ns** and reports a **464 MHz** (MAX FREQ) clock-summary frequency; at one output pixel per cycle, the competition **FOM is 0.01550** (vectorless power basis; the SAIF active-window estimate is 0.105 W). The last picoseconds to 2.155 ns were obtained by relaxing only the quasi-static coefficient-distribution paths, applying a measured pblock floorplan, and accepting two documented advisories (ZPS7-1, LUTAR-1) as waivers instead of trading area to silence them.
 
 The datapath keeps the core architectural decisions that motivated the original design: a streaming line-buffer window generator, a tap-delay alignment structure, and a DSP48E1-based multiply-accumulate cascade. The RTL is parameterized for multiple parallel kernels - the window generator and controller are shared, while the MAC/output stages replicate per kernel - providing a clean path from the single-kernel competition baseline to higher-throughput parallel configurations while keeping the baseline architecture unchanged.
 
