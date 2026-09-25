@@ -1,21 +1,21 @@
-﻿# Errors: 0, Warnings: 0
-# TB_RESULT: PASS N=3 W=32 RELU=0 checked=2600 x=0
+# Errors: 0, Warnings: 0
+# TB_RESULT: PASS N=3 W=32 RELU=0 K=1 checked=2596 x=0
 # Errors: 0, Warnings: 0
 # Errors: 0, Warnings: 0
-# TB_RESULT: PASS N=3 W=64 RELU=0 checked=2344 x=0
+# TB_RESULT: PASS N=3 W=64 RELU=0 K=1 checked=2340 x=0
 # Errors: 0, Warnings: 0
 # Errors: 0, Warnings: 0
-# TB_RESULT: PASS N=5 W=32 RELU=0 checked=2272 x=0
+# TB_RESULT: PASS N=5 W=32 RELU=0 K=1 checked=2268 x=0
 # Errors: 0, Warnings: 0
 # Errors: 0, Warnings: 0
-# TB_RESULT: PASS N=4 W=32 RELU=0 checked=2440 x=0
+# TB_RESULT: PASS N=4 W=32 RELU=0 K=1 checked=2436 x=0
 # Errors: 0, Warnings: 0
 # Errors: 0, Warnings: 0
-# TB_RESULT: PASS N=7 W=32 RELU=0 checked=1912 x=0
+# TB_RESULT: PASS N=7 W=32 RELU=0 K=1 checked=1908 x=0
 # Errors: 0, Warnings: 0
 # Errors: 0, Warnings: 0
-# TB_RESULT: PASS N=3 W=8 RELU=0 checked=2792 x=0
+# TB_RESULT: PASS N=3 W=8 RELU=0 K=1 checked=2788 x=0
 # Errors: 0, Warnings: 0
 # Errors: 0, Warnings: 0
-# TB_RESULT: PASS N=3 W=32 RELU=1 checked=2600 x=0
+# TB_RESULT: PASS N=3 W=32 RELU=1 K=1 checked=2596 x=0
 # Errors: 0, Warnings: 0

@@ -27,7 +27,7 @@
 |:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
 | **50** | **97** | **9** | **0** | **464 MHz** | **0.129 W** | **1 pixel/cycle** | **0.01550** | **2596/2596** |
 
-Bit-exact against an independent Python golden model across **21 regression configurations** (7 kernel/image/ReLU settings × 1–3 parallel kernels), routed and timed on `xc7z020clg400-1`.
+Bit-exact against an independent Python golden model for the **7 recorded configurations** (21 golden vectors are supplied: 7 kernel/image/ReLU settings × 1–3 parallel kernels), routed and timed on `xc7z020clg400-1`.
 
 ## Competition Context
 
@@ -104,9 +104,9 @@ For N=3 there are 9 taps and 9 DSP48E1 blocks; accumulation stays in the DSP cas
 - **Additions cost zero LUTs.** Each tap multiplies in its own DSP48E1 and hands its running sum to the next slice through the PCOUT→PCIN cascade — the nine additions never touch fabric.
 - **Zero BRAMs, minimal storage.** Line buffers and tap delays map to SRL primitives; forcing a datapath reset would re-map them to flip-flops and inflate both LUT and FF counts, so the datapath is deliberately reset-free (deterministic fill/flush protocol instead).
 - **Overflow impossible by construction.** OUT_W = 16 + ⌈log₂N²⌉ signed bits strictly exceeds the worst case N²·32,640 for every N.
-- **One RTL, many designs.** The same parameterized sources verify N=3…7 and K=1…3 alongside the 51-LUT competition baseline; the report documents the full resource-scaling study.
+- **One RTL, many designs.** The same parameterized sources verify N=3…7 at K=1 alongside the 50-LUT competition baseline; golden vectors and run scripts are supplied for K=1…3, but only the seven K=1 configurations are recorded as PASS in the committed regression log.
 - **Measured, not assumed.** The multiplier decision is backed by a routed DSP-free A/B build (792 LUTs, 143 MHz) that loses to the DSP design on FOM **even when each side is evaluated at its own MAX-FREQ operating point**.
-- **Warm-pipeline restart.** Bursts run back-to-back without re-resetting; the persistent-valid protocol eliminates inter-burst gaps in the output stream.
+- **Warm-pipeline restart.** Bursts run back-to-back without re-resetting; each burst still pays the geometric fill before valid outputs resume (the warm restart removes the per-burst reset, not the fill interval), and the persistent-valid protocol keeps the output stream gap-free once valid.
 - **SAIF-driven power optimization.** Outputs freeze at zero outside valid windows and Vccint is scaled to 0.950 V; a SAIF-annotated power study on the final 2.155 ns netlist gives a High-Confidence active-window estimate of **0.105 W**, while the conservative vectorless estimate carried into the competition FOM is **0.129 W** - a competition FOM of **0.01550**.
 - **Golden vectors under CI.** Every push regenerates all 21 expected-output files and verifies them byte-identically (badge at the top).
 
@@ -233,7 +233,7 @@ The bonus system wrapper is verified independently of the core regression above:
 
 | Item | Value |
 |---|---|
-| Configuration | N=3, W=32, ReLU disabled |
+| Configuration | N=3, W=32, ReLU enabled |
 | Input | 1024 pixels streamed into on-chip memory |
 | Kernel | 9 coefficients |
 | Completion | `done = 1` |
@@ -308,7 +308,7 @@ Power is reported two ways. The **official FOM basis is the post-route vectorles
 
 ## Implementation View
 
-Routed utilization evidence for the 51-LUT / 9-DSP / 0-BRAM baseline:
+Routed utilization evidence for the 50-LUT / 9-DSP / 0-BRAM baseline:
 
 ![Utilization report](images/utilization_report.png)
 
@@ -411,7 +411,7 @@ The waivers are re-verifiable from the committed reports with `report_drc` / `re
 ├── doc/
 │   ├── AI_Accelerator_Report.pdf            # full project report
 │   └── 2026_SSCS_Egypt_Competition_Announcement.pdf  # competition specification
-├── images/                       # 25 evidence figures
+├── images/                       # 36 evidence figures
 ├── _regress.log                  # 7/7 PASS RTL regression summary log
 ├── vivado_implementation/                # complete Vivado project (project_9.xpr): impl reports, checkpoints,
 │                                #   post-route timing simulation + SAIF activity
