@@ -8,7 +8,7 @@
 
 [![HDL](https://img.shields.io/badge/HDL-Verilog--2001-1e90ff)](rtl/)
 [![Python](https://img.shields.io/badge/Golden%20Model-Python%203-3776AB?logo=python&logoColor=white)](python/golden_model.py)
-[![Xilinx Vivado](https://img.shields.io/badge/Synthesis-Xilinx%20Vivado-E01F27)](doc/AI_Accelerator_Report.pdf)
+[![Xilinx Vivado 2019.1](https://img.shields.io/badge/Synthesis-Xilinx%20Vivado%202019.1-E01F27)](doc/AI_Accelerator_Report.pdf)
 [![ModelSim](https://img.shields.io/badge/Simulation-ModelSim-00629B)](sim/)
 [![FPGA](https://img.shields.io/badge/FPGA-Zynq--7020-success)](https://www.amd.com/en/products/adaptive-socs-and-fpgas/zynq-7000-series.html)
 [![IEEE SSCS Egypt 2026](https://img.shields.io/badge/IEEE%20SSCS%20Egypt-2026%20Competition-e8710a)](doc/2026_SSCS_Egypt_Competition_Announcement.pdf)
@@ -493,7 +493,7 @@ Every push that touches the golden model or expected outputs triggers the **Gold
 | Verilog-2001 / SystemVerilog | RTL in Verilog-2001; self-checking testbenches in SystemVerilog |
 | Python 3 | Golden reference model + golden-vector generation |
 | ModelSim (Intel FPGA Edition) | RTL + system-level simulation |
-| Xilinx Vivado | Synthesis, implementation, timing/utilization/power reports |
+| Xilinx Vivado 2019.1 | Synthesis, implementation, timing/utilization/power reports |
 | Xilinx Zynq-7020 (xc7z020clg400-1) | Target FPGA; DSP48E1 MAC cascade |
 | Tcl | Vivado batch sweep flow |
 | GitHub Actions | Golden-model bit-exact regression CI |
